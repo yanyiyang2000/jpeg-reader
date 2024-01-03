@@ -105,6 +105,9 @@ Each **DE** is 12-byte.
 [^6.1]: Specified in TIFF rev6.0, p14
 [^6.2]: If 4 bytes are not enough to hold all the values, this value indicates the offset of the actual values from the first byte of IFH
 
+# Work Flow Overview
+![alt text](/assets/flowchart.png)
+
 # Data Structure
 
 ## `Marker_Segment`
@@ -187,12 +190,3 @@ typedef struct __attribute__((packed)) {
     };
 } Directory_Entry;
 ```
-
-# Function Call Hierarchy
-1. Construct *Application Marker Segment*s by calling `construct_marker_segment`
-2. For each *Application Marker Segment* to be constructed:
-    1. If the identifier mathes that of **APP0**, call `jfif_construct_segment`
-    2. If the identifier mathes that of **APP1**, call `exif_construct_segment`
-
-![alt text](/assets/flowchart.png)
-
