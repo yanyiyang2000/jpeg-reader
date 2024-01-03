@@ -105,8 +105,11 @@ Each **DE** is 12-byte.
 [^6.1]: Specified in TIFF rev6.0, p14
 [^6.2]: If 4 bytes are not enough to hold all the values, this value indicates the offset of the actual values from the first byte of IFH
 
-# Work Flow Overview
+# Workflow Overview
 ![alt text](/assets/flowchart.png)
+
+# Construct APP1
+![alt text](/assets/flowchart_exif.png)
 
 # Data Structure
 
