@@ -108,7 +108,7 @@ Each **DE** is 12-byte.
 # Workflow Overview
 ![alt text](/assets/flowchart.png)
 
-# Construct APP1
+# Construct Exif Segment
 ![alt text](/assets/flowchart_exif.png)
 
 # Data Structure
