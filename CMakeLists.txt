@@ -8,6 +8,6 @@ add_subdirectory(source)
 
 add_executable(test main.c)
 
-target_link_libraries(test PUBLIC exif_reader)
+target_link_libraries(test PUBLIC jpeg-reader)
 
 target_include_directories(test PUBLIC "${CMAKE_SOURCE_DIR}/include")
