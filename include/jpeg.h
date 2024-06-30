@@ -19,8 +19,8 @@ typedef struct __attribute__((packed)) {
     uint8_t  Marker[2]; /* marker of this segment */
     uint16_t Length;    /* length of this segment (always in big-endian) */
     union {             /* pointer to segment (JFIF or Exif) */
-        JFIF_Segment *jfif_segment;
-        Exif_Segment *exif_segment;
+        struct JFIF_Segment *jfif_segment;
+        struct Exif_Segment *exif_segment;
     };
 } Marker_Segment;
 

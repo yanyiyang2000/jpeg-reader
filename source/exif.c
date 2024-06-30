@@ -10,13 +10,13 @@
 /* Flag indicating mismatch between the image and machine endianess. */
 bool need_byte_swap = false;
 
-void directory_entry_byte_swap(Directory_Entry *de) {
+void directory_entry_byte_swap(struct Directory_Entry *de) {
     de->Tag          = __builtin_bswap16(de->Tag);
     de->Type         = __builtin_bswap16(de->Type);
     de->Value_Count  = __builtin_bswap32(de->Value_Count);
 }
 
-void directory_entry_print_info(Directory_Entry *de) {
+void directory_entry_print_info(struct Directory_Entry *de) {
     uint16_t tag = de->Tag;
     uint16_t type = de->Type;
     uint32_t value_count = de->Value_Count;
@@ -95,7 +95,7 @@ void directory_entry_print_info(Directory_Entry *de) {
     }
 }
 
-void directory_entry_parse_value(Directory_Entry *de, uint8_t *ifh) {
+void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
     uint16_t tag = de->Tag;
     uint16_t type = de->Type;
     uint32_t value_count = de->Value_Count;
@@ -308,7 +308,7 @@ void directory_entry_parse_value(Directory_Entry *de, uint8_t *ifh) {
     }
 }
 
-void image_file_header_byte_swap(Image_File_Header *ifh) {
+void image_file_header_byte_swap(struct Image_File_Header *ifh) {
     ifh->Magic_Number = __builtin_bswap16(ifh->Magic_Number);
     ifh->IFD_Offset = __builtin_bswap32(ifh->IFD_Offset);
 }
@@ -321,7 +321,7 @@ void image_file_directory_print_info(struct Image_File_Directory *ifd) {
     printf("\n");
 }
 
-uint8_t* exif_construct_de(Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh) {
+uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh) {
     uint8_t *offset = from;
 
     for (int i = 0; i < de_count; i++) {
@@ -350,7 +350,7 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
     offset += 2; /* skip the DE Count field, now pointing at the first Directory Entry (DE) */
 
     /* Construct the DEs */
-    Directory_Entry *de = calloc(de_count, sizeof(Directory_Entry));
+    struct Directory_Entry *de = calloc(de_count, sizeof(struct Directory_Entry));
     offset = exif_construct_de(de, offset, de_count, ifh);
     to->DE = de;
 
@@ -372,7 +372,7 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
     return offset;
 }
 
-uint8_t* exif_construct_segment(Exif_Segment *to, uint8_t *from, uint16_t seg_len) {
+uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t seg_len) {
     uint8_t *offset = from;
 
     /* Obtain the Identifier field of the Exif Segment */

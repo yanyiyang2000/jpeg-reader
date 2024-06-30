@@ -28,15 +28,15 @@ uint8_t* construct_marker_segment(Marker_Segment *to, uint8_t *from, uint16_t se
 
     /* Construct a specific Segment based on the Marker field */
     switch (to->Marker[1]) {
-        JFIF_Segment *jfif_segment;
-        Exif_Segment *exif_segment;
+        struct JFIF_Segment *jfif_segment;
+        struct Exif_Segment *exif_segment;
         case 0xE0:
-            jfif_segment = calloc(1, sizeof(JFIF_Segment));
+            jfif_segment = calloc(1, sizeof(struct JFIF_Segment));
             offset = jfif_construct_segment(jfif_segment, offset, seg_len-2);
             to->jfif_segment = jfif_segment;
             break;
         case 0xE1:
-            exif_segment = calloc(1, sizeof(Exif_Segment));
+            exif_segment = calloc(1, sizeof(struct Exif_Segment));
             offset = exif_construct_segment(exif_segment, offset, seg_len-2);
             to->exif_segment = exif_segment;
             break;

@@ -13,7 +13,7 @@
  * 
  * @return a pointer to the first byte after the JFIF Segment
  */
-uint8_t* jfif_construct_segment(JFIF_Segment *to, uint8_t *from, uint16_t seg_len) {
+uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t seg_len) {
     uint8_t *offset = from;
 
     /* Obtain all the fields but RGBn and AMPF if exits */
@@ -46,7 +46,7 @@ uint8_t* jfif_construct_segment(JFIF_Segment *to, uint8_t *from, uint16_t seg_le
  * 
  * @param segment The JFIF Segment whose fields need byte swap
  */
-void jfif_byte_swap(JFIF_Segment *segment) {
+void jfif_byte_swap(struct JFIF_Segment *segment) {
     segment->Version  = __builtin_bswap16(segment->Version);
     segment->XDensity = __builtin_bswap16(segment->XDensity);
     segment->YDensity = __builtin_bswap16(segment->YDensity);
@@ -57,7 +57,7 @@ void jfif_byte_swap(JFIF_Segment *segment) {
  * 
  * @param segment The JFIF Segment whose information to be displayed
  */
-void jfif_print_info(JFIF_Segment *segment) {
+void jfif_print_info(struct JFIF_Segment *segment) {
     printf("JFIF v%d.%d\n", segment->Version >> 8, segment->Version & 0xff);
     printf("Unit:                             %d\n", segment->Unit);
     printf("Horizontal pixel density:         %d\n", segment->XDensity);

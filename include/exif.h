@@ -41,7 +41,7 @@
  * The value of the Count part of an ASCII field entry includes the NUL. If padding is necessary, the Count does not 
  * include the pad byte.
  */
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Directory_Entry {
     uint16_t Tag;          /* Bytes 0-1 */
     uint16_t Type;         /* Bytes 2-3 */
     uint32_t Value_Count;  /* Bytes 4-7 */
@@ -58,7 +58,7 @@ typedef struct __attribute__((packed)) {
         float    *fValue4; /* stores a sequence of single precision floating Values each 4 bytes, i.e., Type FLOAT */
         double   *fValue8; /* stores a sequence of double precision floating Values each 8 bytes, i.e., Type DOUBLE */
     };
-} Directory_Entry;
+};
 
 /**
  * [TIFF Rev 6.0, p14]
@@ -69,9 +69,9 @@ typedef struct __attribute__((packed)) {
  */
 struct Image_File_Directory {
     uint16_t                     DE_Count;   /* The number of directory entries */
-    Directory_Entry              *DE;        /* Pointer to the first DE, for ease of programming */
+    struct Directory_Entry       *DE;        /* Pointer to the first DE, for ease of programming */
     uint32_t                     IFD_Offset; /* The offset (in bytes) of the next IFD from the Image File Header */
-    struct Image_File_Directory *Next_IFD;  /* Pointer to the next IFD, for ease of programming, not defined by TIFF */
+    struct Image_File_Directory  *Next_IFD;  /* Pointer to the next IFD, for ease of programming, not defined by TIFF */
 };
 
 /**
@@ -85,21 +85,21 @@ struct Image_File_Directory {
  *              but must begin on a word boundary. In particular, an Image File Directory may follow the image data it 
  *              describes.
  */
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Image_File_Header {
     uint16_t Byte_Order;   /* Bytes 0-1 */
     uint16_t Magic_Number; /* Bytes 2-3 */
     uint32_t IFD_Offset;   /* Bytes 4-7 */
-} Image_File_Header;
+};
 
 /**
  * [Exif v2.32, p19]
  * Exif Marker Segment
  */
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Exif_Segment {
     uint8_t                     Identifier[6]; /* Double NULL terminated ASCII string "Exif\0\0" */
-    Image_File_Header           IFH;           /* Image file header */
+    struct Image_File_Header    IFH;           /* Image file header */
     struct Image_File_Directory *IFDs;         /* Pointer to the first IFDs */
-} Exif_Segment;
+};
 
 /**
  * This function performs byte swap on the fields of Directory Entry (DE).
@@ -108,14 +108,14 @@ typedef struct __attribute__((packed)) {
  * 
  * @param de The pointer to the first byte of the DE
  */
-void directory_entry_byte_swap(Directory_Entry *de);
+void directory_entry_byte_swap(struct Directory_Entry *de);
 
 /**
  * This function prints information of Directory Entry (DE).
  * 
  * @param de The pointer to the first byte of the DE
  */
-void directory_entry_print_info(Directory_Entry *de);
+void directory_entry_print_info(struct Directory_Entry *de);
 
 /**
  * This functions evaluates the Value Offset field of the DE and finds the actual Value if the Value Offset is stored.
@@ -125,14 +125,14 @@ void directory_entry_print_info(Directory_Entry *de);
  * @param de  The pointer to the first byte of the DE
  * @param ifh The pointer to the first byte of the Image File Header (IFD) of APP1 Marker Segment
  */
-void directory_entry_parse_value(Directory_Entry *de, uint8_t *ifh);
+void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh);
 
 /**
  * This function performs byte swap on the fields of Image File Header (IFH).
  * 
  * @param ifh The pointer to the first byte of the IFH
  */
-void image_file_header_byte_swap(Image_File_Header *ifh);
+void image_file_header_byte_swap(struct Image_File_Header *ifh);
 
 /**
  * This function prints information of Image File Directory (IFD).
@@ -155,7 +155,7 @@ void image_file_directory_print_info(struct Image_File_Directory *ifd);
  * 
  * @return A pointer to the first byte after the last DE
  */
-uint8_t* exif_construct_de(Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh);
+uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh);
 
 /**
  * This function constructs an Image Field Directory (IFD) by parsing the given byte array.
@@ -177,6 +177,6 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
  * 
  * @return A pointer to the first byte after the Exif Segment
  */
-uint8_t* exif_construct_segment(Exif_Segment *to, uint8_t *from, uint16_t seg_len);
+uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t seg_len);
 
 #endif /* EXIF_H */
