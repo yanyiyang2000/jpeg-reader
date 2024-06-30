@@ -22,12 +22,15 @@ uint16_t get_segment_length(uint8_t *offset) {
 
 
 int main() {
-    FILE *img = fopen("./images/2023-0290.jpeg", "rb"); //TODO: if using debugger, change path to ../images/IMG_XXXX.jpeg
+    FILE    *img;
     uint8_t buffer[10240] = {0};
+    uint8_t *offset;
+
+    img = fopen("./images/test.jpeg", "rb"); //TODO: if using debugger, change path to ../images/test.jpeg
     fread(buffer, 10240, 1, img);
 
     /* Point to the first byte of the image */
-    uint8_t *offset = buffer;
+    offset = buffer;
 
     /* Skip SOI (FF D8) */
     offset += 2;
