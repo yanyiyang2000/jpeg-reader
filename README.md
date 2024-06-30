@@ -114,22 +114,22 @@ Each **DE** is 12-byte.
 # Data Structure
 
 ## `Marker_Segment`
-Struct `Marker_Segment` is composed of
+Struct `Marker_Segment` is defined as
 ```c
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Marker_Segment {
     uint8_t  Marker[2];
     uint16_t Length;
     union {
-        JFIF_Segment *jfif_segment;
-        Exif_Segment *exif_segment;
+        struct JFIF_Segment *jfif_segment;
+        struct Exif_Segment *exif_segment;
     };
-} Marker_Segment;
+};
 ```
 
 ## `JFIF_Segment`
-Struct `JFIF_Segment` is composed of
+Struct `JFIF_Segment` is defined as
 ```c
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) JFIF_Segment {
     uint8_t  Identifier[5]; 
     uint16_t Version;
     uint8_t  Unit;
@@ -139,44 +139,44 @@ typedef struct __attribute__((packed)) {
     uint8_t  YThumbnail;
     uint8_t  *RGBn;
     uint8_t  AMPF[4];
-} JFIF_Segment;
+};
 ```
 
 ## `Exif_Segment`
-Struct `Exif_Segment` is composed of
+Struct `Exif_Segment` is defined as
 ```c
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Exif_Segment {
     uint8_t                      Identifier[6];
-    Image_File_Header            IFH;
+    struct Image_File_Header     IFH;
     struct Image_File_Directory  *IFDs;
-} Exif_Segment;
+};
 ```
 
 ## `Image_File_Header`
-Struct `Image_File_Header` is composed of
+Struct `Image_File_Header` is defined as
 ```c
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Image_File_Header {
     uint16_t Byte_Order;
     uint16_t Magic_Number;
     uint32_t IFD_Offset;
-} Image_File_Header;
+};
 ```
 
 ## `Image_File_Directory`
-Struct `Image_File_Directory` is composed of
+Struct `Image_File_Directory` is defined as
 ```c
 struct Image_Field_Directory {
     uint16_t                     DE_Count;
-    Directory_Entry              *DE;
+    struct Directory_Entry       *DE;
     uint32_t                     IFD_Offset;
     struct Image_Field_Directory *Next_IFD;
 };
 ```
 
 ## `Directory_Entry`
-Struct `Directory_Entry` is composed of
+Struct `Directory_Entry` is defined as
 ```c
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Directory_Entry {
     uint16_t Tag;
     uint16_t Type;
     uint32_t Value_Count;
@@ -191,5 +191,5 @@ typedef struct __attribute__((packed)) {
         float    *fValue4;
         double   *fValue8;
     };
-} Directory_Entry;
+};
 ```
