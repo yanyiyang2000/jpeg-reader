@@ -10,27 +10,91 @@
 /* Flag indicating mismatch between the image and machine endianess. */
 bool need_byte_swap = false;
 
-/**
- * This function swaps the bytes of the fields in Directory Entry (DE).
- * 
- * @note Byte swap for Value_Offset field will be performed in directory_entry_parse_value.
- * 
- * @param entry The DE whose fields need byte swap
- */
 void directory_entry_byte_swap(Directory_Entry *de) {
     de->Tag          = __builtin_bswap16(de->Tag);
     de->Type         = __builtin_bswap16(de->Type);
     de->Value_Count  = __builtin_bswap32(de->Value_Count);
 }
 
-/**
- * This functions evaluates the Value Offset field of the DE and finds the actual Value if the Value Offset is stored.
- * 
- * @note If the Value is shorter than 4 bytes, it is left-justified within the 4-byte Value Offset. [TIFF Rev. 6.0, p15]
- * 
- * @param entry The DE whose Value Offset to be evaluated
- * @param start The pointer to the first byte of the Image File Header (IFD) of APP1 Marker Segment
- */
+void directory_entry_print_info(Directory_Entry *de) {
+    uint16_t tag = de->Tag;
+    uint16_t type = de->Type;
+    uint32_t value_count = de->Value_Count;
+
+    if (type == BYTE) {
+        uint8_t *ptr = de->uValue1;
+        printf("0x%-.4X | %-6d | %-11d | %"PRIu8"\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            printf("%32"PRIu8"\n", *(ptr + i));
+        }
+
+    } else if (type == SBYTE) {
+        int8_t *ptr = de->sValue1;
+        printf("0x%-.4X | %-6d | %-11d | %"PRId8"\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            printf("%32"PRId8"\n", *(ptr + i));
+        }
+
+    } else if (type == ASCII) {
+        printf("0x%-.4X | %-6d | %-11d | %s\n", tag, type, value_count, de->uValue1);
+
+    } else if (type == SHORT) {
+        uint16_t *ptr = de->uValue2;
+        printf("0x%-.4X | %-6d | %-11d | %"PRIu16"\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            /* Print 32 spaces before printing the value */
+            printf("%*c%"PRIu16"\n", 32, ' ', *(ptr + i));
+        }
+
+    } else if (type == SSHORT) {
+        int16_t *ptr = de->sValue2;
+        printf("0x%-.4X | %-6d | %-11d | %"PRId16"\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            printf("%32"PRId16"\n", *(ptr + i));
+        }
+
+    } else if (type == LONG) {
+        uint32_t *ptr = de->uValue4;
+        printf("0x%-.4X | %-6d | %-11d | %"PRIu32"\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            printf("%32"PRIu32"\n", *(ptr + i));
+        }
+
+    } else if (type == SLONG) {
+        int32_t *ptr = de->sValue4;
+        printf("0x%-.4X | %-6d | %-11d | %"PRId32"\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            printf("%32"PRId32"\n", *(ptr + i));
+        }
+
+    } else if (type == RATIONAL) {
+        uint32_t *ptr = de->uValue4;
+        printf("0x%-.4X | %-6d | %-11d | %"PRIu32"/%"PRIu32"\n", tag, type, value_count, *ptr, *(ptr + 1));
+        for (int i = 1; i < value_count; i++) {
+            /* Print 32 spaces before printing the value */
+            printf("%*c%"PRIu32"/%"PRIu32"\n", 32, ' ', *(ptr + 2*i), *(ptr + 2*i + 1));
+        }
+    } else if (type == SRATIONAL) {
+        int32_t *ptr = de->sValue4;
+        printf("0x%-.4X | %-6d | %-11d | %"PRId32"/%"PRId32"\n", tag, type, value_count, *ptr, *(ptr + 1));
+        for (int i = 1; i < value_count; i++) {
+            printf("%32"PRId32"/%"PRId32"\n", *(ptr + 2*i), *(ptr + 2*i + 1));
+        }
+    } else if (type == FLOAT) {
+        float *ptr = de->fValue4;
+        printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            printf("%32f\n", *(ptr + i));
+        }
+    } else if (type == DOUBLE) {
+        double *ptr = de->fValue8;
+        printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
+        for (int i = 1; i < value_count; i++) {
+            printf("%32f\n", *(ptr + i));
+        }
+    }
+}
+
 void directory_entry_parse_value(Directory_Entry *de, uint8_t *ifh) {
     uint16_t tag = de->Tag;
     uint16_t type = de->Type;
@@ -244,105 +308,11 @@ void directory_entry_parse_value(Directory_Entry *de, uint8_t *ifh) {
     }
 }
 
-/**
- * This function prints information about the Directory Entry (DE).
- * 
- * @param de The DE whose information to be displayed
- */
-void directory_entry_print_info(Directory_Entry *de) {
-    uint16_t tag = de->Tag;
-    uint16_t type = de->Type;
-    uint32_t value_count = de->Value_Count;
-
-    if (type == BYTE) {
-        uint8_t *ptr = de->uValue1;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu8"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRIu8"\n", *(ptr + i));
-        }
-
-    } else if (type == SBYTE) {
-        int8_t *ptr = de->sValue1;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId8"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId8"\n", *(ptr + i));
-        }
-
-    } else if (type == ASCII) {
-        printf("0x%-.4X | %-6d | %-11d | %s\n", tag, type, value_count, de->uValue1);
-
-    } else if (type == SHORT) {
-        uint16_t *ptr = de->uValue2;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu16"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            /* Print 32 spaces before printing the value */
-            printf("%*c%"PRIu16"\n", 32, ' ', *(ptr + i));
-        }
-
-    } else if (type == SSHORT) {
-        int16_t *ptr = de->sValue2;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId16"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId16"\n", *(ptr + i));
-        }
-
-    } else if (type == LONG) {
-        uint32_t *ptr = de->uValue4;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu32"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRIu32"\n", *(ptr + i));
-        }
-
-    } else if (type == SLONG) {
-        int32_t *ptr = de->sValue4;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId32"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId32"\n", *(ptr + i));
-        }
-
-    } else if (type == RATIONAL) {
-        uint32_t *ptr = de->uValue4;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu32"/%"PRIu32"\n", tag, type, value_count, *ptr, *(ptr + 1));
-        for (int i = 1; i < value_count; i++) {
-            /* Print 32 spaces before printing the value */
-            printf("%*c%"PRIu32"/%"PRIu32"\n", 32, ' ', *(ptr + 2*i), *(ptr + 2*i + 1));
-        }
-    } else if (type == SRATIONAL) {
-        int32_t *ptr = de->sValue4;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId32"/%"PRId32"\n", tag, type, value_count, *ptr, *(ptr + 1));
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId32"/%"PRId32"\n", *(ptr + 2*i), *(ptr + 2*i + 1));
-        }
-    } else if (type == FLOAT) {
-        float *ptr = de->fValue4;
-        printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32f\n", *(ptr + i));
-        }
-    } else if (type == DOUBLE) {
-        double *ptr = de->fValue8;
-        printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32f\n", *(ptr + i));
-        }
-    }
-}
-
-/**
- * This function swaps bytes of the fields in the Image File Header (IFH).
- * 
- * @param header The IFH whose fields need byte swap
- */
 void image_file_header_byte_swap(Image_File_Header *ifh) {
     ifh->Magic_Number = __builtin_bswap16(ifh->Magic_Number);
     ifh->IFD_Offset = __builtin_bswap32(ifh->IFD_Offset);
 }
 
-/**
- * This function prints information about the Image File Directory (IFD).
- * 
- * @param entry The IFD whose information to be displayed
- */
 void image_file_directory_print_info(struct Image_File_Directory *ifd) {
     printf("%-6s | %-6s | %-6s | %-6s\n", "Tag", "Type", "Value Count", "Value / Value Offset");
     for (int i = 0; i < ifd->DE_Count; i++) {
@@ -351,20 +321,6 @@ void image_file_directory_print_info(struct Image_File_Directory *ifd) {
     printf("\n");
 }
 
-/**
- * This function constructs Directory Entries (DEs) in an Image File Directory (IFD) by parsing the given byte array.
- * 
- * @note There are several Exif-specific DEs according to the Exif v2.32. 
- * For example, DE with Tag 0x8769 contains offset to the Exif IFD from the first byte of Image File Header (IFH).
- * DE with Tag 0x8825 contains offset to the GPS information from the first byte of the IFH.
- * 
- * @param to       The pointer to the first byte of the first DE
- * @param from     The pointer to the byte array to be parsed
- * @param de_count The count of DEs in the IFD
- * @param ifh      The pointer to the first byte of the IFH
- * 
- * @return a pointer to the first byte after the last DE
- */
 uint8_t* exif_construct_de(Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh) {
     uint8_t *offset = from;
 
@@ -380,15 +336,6 @@ uint8_t* exif_construct_de(Directory_Entry *to, uint8_t *from, uint16_t de_count
     return offset;
 }
 
-/**
- * This function constructs an Image Field Directory (IFD) by parsing the given byte array.
- * 
- * @param to   The pointer to the first byte of the IFD
- * @param from The pointer to the byte array to be parsed
- * @param ifh  The pointer to the first byte of the Image File Header (IFH)
- * 
- * @return a pointer to the first byte after the IFD
- */
 uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint8_t *ifh) {
     uint8_t *offset = from;
     uint16_t de_count = 0;
@@ -425,15 +372,6 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
     return offset;
 }
 
-/**
- * This function constructs an Exif Segment by parsing the given byte array.
- * 
- * @param to      The pointer to the first byte of the Exif Segment
- * @param from    The pointer to the byte array to be parsed
- * @param seg_len The length of the Exif Segment
- * 
- * @return a pointer to the first byte after the Exif Segment
- */
 uint8_t* exif_construct_segment(Exif_Segment *to, uint8_t *from, uint16_t seg_len) {
     uint8_t *offset = from;
 

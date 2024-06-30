@@ -101,20 +101,82 @@ typedef struct __attribute__((packed)) {
     struct Image_File_Directory *IFDs;         /* Pointer to the first IFDs */
 } Exif_Segment;
 
+/**
+ * This function performs byte swap on the fields of Directory Entry (DE).
+ * 
+ * @note Byte swap for Value Offset field will be performed by directory_entry_parse_value.
+ * 
+ * @param de The pointer to the first byte of the DE
+ */
 void directory_entry_byte_swap(Directory_Entry *de);
 
+/**
+ * This function prints information of Directory Entry (DE).
+ * 
+ * @param de The pointer to the first byte of the DE
+ */
 void directory_entry_print_info(Directory_Entry *de);
 
+/**
+ * This functions evaluates the Value Offset field of the DE and finds the actual Value if the Value Offset is stored.
+ * 
+ * @note If the Value is shorter than 4 bytes, it is left-justified within the 4-byte Value Offset. [TIFF Rev. 6.0, p15]
+ * 
+ * @param de  The pointer to the first byte of the DE
+ * @param ifh The pointer to the first byte of the Image File Header (IFD) of APP1 Marker Segment
+ */
 void directory_entry_parse_value(Directory_Entry *de, uint8_t *ifh);
 
-void image_file_header_byte_swap(Image_File_Header *header);
+/**
+ * This function performs byte swap on the fields of Image File Header (IFH).
+ * 
+ * @param ifh The pointer to the first byte of the IFH
+ */
+void image_file_header_byte_swap(Image_File_Header *ifh);
 
+/**
+ * This function prints information of Image File Directory (IFD).
+ * 
+ * @param ifd The pointer to the first byte of the IFD
+ */
 void image_file_directory_print_info(struct Image_File_Directory *ifd);
 
+/**
+ * This function constructs Directory Entries (DEs) in an Image File Directory (IFD) by parsing the given byte array.
+ * 
+ * @note There are several Exif-specific DEs according to the Exif v2.32. 
+ * For example, DE with Tag 0x8769 contains offset to the Exif IFD from the first byte of Image File Header (IFH).
+ * DE with Tag 0x8825 contains offset to the GPS information from the first byte of IFH.
+ * 
+ * @param to       The pointer to the first byte of the first DE
+ * @param from     The pointer to the byte array to be parsed
+ * @param de_count The count of DEs in the IFD
+ * @param ifh      The pointer to the first byte of the IFH
+ * 
+ * @return A pointer to the first byte after the last DE
+ */
 uint8_t* exif_construct_de(Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh);
 
+/**
+ * This function constructs an Image Field Directory (IFD) by parsing the given byte array.
+ * 
+ * @param to   The pointer to the first byte of the IFD
+ * @param from The pointer to the byte array to be parsed
+ * @param ifh  The pointer to the first byte of the Image File Header (IFH)
+ * 
+ * @return A pointer to the first byte after the IFD
+ */
 uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint8_t *ifh);
 
+/**
+ * This function constructs an Exif Segment by parsing the given byte array.
+ * 
+ * @param to      The pointer to the first byte of the Exif Segment
+ * @param from    The pointer to the byte array to be parsed
+ * @param seg_len The length of the Exif Segment
+ * 
+ * @return A pointer to the first byte after the Exif Segment
+ */
 uint8_t* exif_construct_segment(Exif_Segment *to, uint8_t *from, uint16_t seg_len);
 
 #endif /* EXIF_H */
