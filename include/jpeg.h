@@ -15,15 +15,24 @@
  * segment is the two-byte length parameter. This length parameter encodes the number of bytes in the marker segment,
  * including the length parameter and excluding the two-byte marker.
  */
-typedef struct __attribute__((packed)) {
+struct __attribute__((packed)) Marker_Segment {
     uint8_t  Marker[2]; /* marker of this segment */
     uint16_t Length;    /* length of this segment (always in big-endian) */
     union {             /* pointer to segment (JFIF or Exif) */
         struct JFIF_Segment *jfif_segment;
         struct Exif_Segment *exif_segment;
     };
-} Marker_Segment;
+};
 
-uint8_t* construct_marker_segment(Marker_Segment *to, uint8_t *from, uint16_t seg_len);
+/**
+ * This function constructs a Marker Segment by parsing the given byte array.
+ * 
+ * @param to      The pointer to the first byte of the Marker Segment
+ * @param from    The pointer to the byte array to be parsed
+ * @param seg_len The length of the Marker Segment
+ * 
+ * @return A pointer to the first byte after the Marker Segment
+ */
+uint8_t* construct_marker_segment(struct Marker_Segment *to, uint8_t *from, uint16_t seg_len);
 
 #endif /* JPEG_H */

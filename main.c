@@ -10,7 +10,7 @@
  * 
  * @note The Length field in Marker Segment is in big-endian.
  * 
- * @param offset The pointer to the start of the Marker Segment
+ * @param offset The pointer to the first byte of the Marker Segment
  * 
  * @return The Length field of the Marker Segment
  */
@@ -22,11 +22,16 @@ uint16_t get_segment_length(uint8_t *offset) {
 
 
 int main() {
-    FILE    *img;
-    uint8_t buffer[10240] = {0};
-    uint8_t *offset;
+    FILE    *img          = NULL;   // file descriptor of the image                        
+    uint8_t buffer[10240] = {0};    // buffer containing image data
+    uint8_t *offset       = NULL;   // pointer pointing at the current byte
 
-    img = fopen("./images/test.jpeg", "rb"); //TODO: if using debugger, change path to ../images/test.jpeg
+    struct Marker_Segment *segments[16] = {0};  // list of Marker Segment pointers
+    uint8_t               id[2]         = {0};  // the identifier of the current Marker Segment
+    uint16_t              seg_len       = 0;    // the length of the current Marker Segment
+    uint8_t               seg_idx       = 0;    // the index of the Marker Segment pointer in the list
+
+    img = fopen("./images/test.jpeg", "rb");
     fread(buffer, 10240, 1, img);
 
     /* Point to the first byte of the image */
@@ -39,18 +44,14 @@ int main() {
      * Parse Marker Segment, since the number of Marker Segment is unknown, a list of 16 Marker Segment pointers will
      * be created.
      */
-    Marker_Segment *segments[16] = {0}; /* list of Marker Segment pointers */
-    uint8_t id[2] = {0};                /* the identifier of the current Marker Segment */
-    uint16_t seg_len = 0;               /* the length of the current Marker Segment */
-    uint8_t seg_idx = 0;                /* the index of the Marker Segment pointer in the list */
-
     do {
         /* Obtain the length of the Marker Segment */
         seg_len = get_segment_length(offset);
 
         /* Construct Marker Segment and skip it */
-        segments[seg_idx] = calloc(1, sizeof(Marker_Segment));
-        offset = construct_marker_segment(segments[seg_idx++], offset, seg_len);
+        segments[seg_idx] = calloc(1, sizeof(struct Marker_Segment));
+        offset = construct_marker_segment(segments[seg_idx], offset, seg_len);
+        seg_idx += 1;
 
         /**
          * Obtain the identifier of the Marker Segment. Since there is at least 1 Marker Segment, we only need to
