@@ -12,10 +12,12 @@ uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t
     
     /* Swap bytes of the fields of the JFIF Segment which is in big-endian */
     jfif_byte_swap(to);
-    offset += 14; // skip the fields, now pointing at the RGBn field
+
+    /* Skip the fields, now pointing at the RGBn field */
+    offset += 14;
 
     /* Obtain the RGBn field if exists */
-    uint16_t n = to->XThumbnail * to->YThumbnail;   // [JFIF v1.02, p5]
+    uint16_t n = to->XThumbnail * to->YThumbnail;   // [JFIF v1.02, p.5]
     if (n > 0) {                                    // it is possible the length of this field is 0
         to->RGBn = calloc(1, 3*n);
         offset += n;                                // skip the RGBn field

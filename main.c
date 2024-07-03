@@ -24,7 +24,7 @@ uint16_t get_segment_length(uint8_t *offset) {
 int main() {
     FILE    *img          = NULL;   // file descriptor of the image                        
     uint8_t buffer[10240] = {0};    // buffer containing image data
-    uint8_t *offset       = NULL;   // pointer pointing at the current byte
+    uint8_t *offset       = NULL;   // pointer to the current byte
 
     struct Marker_Segment *segments[16] = {0};  // list of Marker Segment pointers
     uint8_t               id[2]         = {0};  // the identifier of the current Marker Segment
