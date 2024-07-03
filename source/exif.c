@@ -22,24 +22,24 @@ void directory_entry_print_info(struct Directory_Entry *de) {
     uint32_t value_count = de->Value_Count;
 
     if (type == BYTE) {
-        uint8_t *ptr = de->uValue1;
+        uint8_t *ptr = de->u1;
         printf("0x%-.4X | %-6d | %-11d | %"PRIu8"\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32"PRIu8"\n", *(ptr + i));
         }
 
     } else if (type == SBYTE) {
-        int8_t *ptr = de->sValue1;
+        int8_t *ptr = de->s1;
         printf("0x%-.4X | %-6d | %-11d | %"PRId8"\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32"PRId8"\n", *(ptr + i));
         }
 
     } else if (type == ASCII) {
-        printf("0x%-.4X | %-6d | %-11d | %s\n", tag, type, value_count, de->uValue1);
+        printf("0x%-.4X | %-6d | %-11d | %s\n", tag, type, value_count, de->u1);
 
     } else if (type == SHORT) {
-        uint16_t *ptr = de->uValue2;
+        uint16_t *ptr = de->u2;
         printf("0x%-.4X | %-6d | %-11d | %"PRIu16"\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             /* Print 32 spaces before printing the value */
@@ -47,47 +47,47 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == SSHORT) {
-        int16_t *ptr = de->sValue2;
+        int16_t *ptr = de->s2;
         printf("0x%-.4X | %-6d | %-11d | %"PRId16"\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32"PRId16"\n", *(ptr + i));
         }
 
     } else if (type == LONG) {
-        uint32_t *ptr = de->uValue4;
+        uint32_t *ptr = de->u4;
         printf("0x%-.4X | %-6d | %-11d | %"PRIu32"\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32"PRIu32"\n", *(ptr + i));
         }
 
     } else if (type == SLONG) {
-        int32_t *ptr = de->sValue4;
+        int32_t *ptr = de->s4;
         printf("0x%-.4X | %-6d | %-11d | %"PRId32"\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32"PRId32"\n", *(ptr + i));
         }
 
     } else if (type == RATIONAL) {
-        uint32_t *ptr = de->uValue4;
+        uint32_t *ptr = de->u4;
         printf("0x%-.4X | %-6d | %-11d | %"PRIu32"/%"PRIu32"\n", tag, type, value_count, *ptr, *(ptr + 1));
         for (int i = 1; i < value_count; i++) {
             /* Print 32 spaces before printing the value */
             printf("%*c%"PRIu32"/%"PRIu32"\n", 32, ' ', *(ptr + 2*i), *(ptr + 2*i + 1));
         }
     } else if (type == SRATIONAL) {
-        int32_t *ptr = de->sValue4;
+        int32_t *ptr = de->s4;
         printf("0x%-.4X | %-6d | %-11d | %"PRId32"/%"PRId32"\n", tag, type, value_count, *ptr, *(ptr + 1));
         for (int i = 1; i < value_count; i++) {
             printf("%32"PRId32"/%"PRId32"\n", *(ptr + 2*i), *(ptr + 2*i + 1));
         }
     } else if (type == FLOAT) {
-        float *ptr = de->fValue4;
+        float *ptr = de->f4;
         printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32f\n", *(ptr + i));
         }
     } else if (type == DOUBLE) {
-        double *ptr = de->fValue8;
+        double *ptr = de->f8;
         printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32f\n", *(ptr + i));
@@ -112,9 +112,9 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
     if ( (type == BYTE) | (type == ASCII) | (type == UNDEFINED) ) {
         if (value_count <= 4) {     // Value presents
             value = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field for replacement
-            de->uValue1 = calloc(value_count, 1);
-            memcpy(de->uValue1, &value, value_count);
+            de->Value_Offset = 0;
+            de->u1 = calloc(value_count, 1);
+            memcpy(de->u1, &value, value_count);
 
         } else {                    // Offset presents
             if (need_byte_swap) {
@@ -122,17 +122,17 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             } else {
                 offset = de->Value_Offset;
             }
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->uValue1 = calloc(value_count, 1);
-            memcpy(de->uValue1, ifh + offset, value_count);
+            de->Value_Offset = 0;
+            de->u1 = calloc(value_count, 1);
+            memcpy(de->u1, ifh + offset, value_count);
         }
 
     } else if (type == SBYTE) {
         if (value_count <= 4) {     // Value presents
             value = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field for replacement
-            de->sValue1 = calloc(value_count, 1);
-            memcpy(de->sValue1, &value, value_count);
+            de->Value_Offset = 0;
+            de->s1 = calloc(value_count, 1);
+            memcpy(de->s1, &value, value_count);
 
         } else {                    // Offset presents
             if (need_byte_swap) {
@@ -140,108 +140,108 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             } else {
                 offset = de->Value_Offset;
             }
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->sValue1 = calloc(value_count, 1);
-            memcpy(de->sValue1, ifh + offset, value_count);
+            de->Value_Offset = 0;
+            de->s1 = calloc(value_count, 1);
+            memcpy(de->s1, ifh + offset, value_count);
         }
 
     } else if (type == SHORT) {
         if (value_count <= 2) {     // Value presents
             value = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->uValue2 = calloc(value_count, 2);
-            memcpy(de->uValue2, &value, 2*value_count);
+            de->Value_Offset = 0;
+            de->u2 = calloc(value_count, 2);
+            memcpy(de->u2, &value, 2*value_count);
 
         } else {                    // Offset presents
             offset = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->uValue2 = calloc(value_count, 2);
-            memcpy(de->uValue2, ifh + offset, 2*value_count);
+            de->Value_Offset = 0;
+            de->u2 = calloc(value_count, 2);
+            memcpy(de->u2, ifh + offset, 2*value_count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *(de->uValue2 + i) = __builtin_bswap16(*(de->uValue2 + i));
+                *(de->u2 + i) = __builtin_bswap16(*(de->u2 + i));
             }
         }
 
     } else if (type == SSHORT) {
         if (value_count <= 2) {     // Value presents
             value = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->sValue2 = calloc(value_count, 2);
-            memcpy(de->sValue2, &value, 2*value_count);
+            de->Value_Offset = 0;
+            de->s2 = calloc(value_count, 2);
+            memcpy(de->s2, &value, 2*value_count);
 
         } else {                    // Offset presents
             offset = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->sValue2 = calloc(value_count, 2);
-            memcpy(de->sValue2, ifh + offset, 2*value_count);
+            de->Value_Offset = 0;
+            de->s2 = calloc(value_count, 2);
+            memcpy(de->s2, ifh + offset, 2*value_count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *(de->sValue2 + i) = __builtin_bswap16(*(de->sValue2 + i));
+                *(de->s2 + i) = __builtin_bswap16(*(de->s2 + i));
             }
         }
 
     } else if (type == LONG) {
         if (value_count <= 1) {     // Value presents
             value = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->uValue4 = calloc(value_count, 4);
-            memcpy(de->uValue4, &value, 4*value_count);
+            de->Value_Offset = 0;
+            de->u4 = calloc(value_count, 4);
+            memcpy(de->u4, &value, 4*value_count);
 
         } else {                    // Offset presents
             offset = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->uValue4 = calloc(value_count, 4);
-            memcpy(de->uValue4, ifh + offset, 4*value_count);
+            de->Value_Offset = 0;
+            de->u4 = calloc(value_count, 4);
+            memcpy(de->u4, ifh + offset, 4*value_count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *(de->uValue4 + i) = __builtin_bswap32(*(de->uValue4 + i));
+                *(de->u4 + i) = __builtin_bswap32(*(de->u4 + i));
             }
         }
 
     } else if (type == SLONG) {
         if (value_count <= 1) {     // Value presents
             value = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->sValue4 = calloc(value_count, 4);
-            memcpy(de->sValue4, &value, 4*value_count);
+            de->Value_Offset = 0;
+            de->s4 = calloc(value_count, 4);
+            memcpy(de->s4, &value, 4*value_count);
 
         } else {                    // Offset presents
             offset = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->sValue4 = calloc(value_count, 4);
-            memcpy(de->sValue4, ifh + offset, 4*value_count);
+            de->Value_Offset = 0;
+            de->s4 = calloc(value_count, 4);
+            memcpy(de->s4, ifh + offset, 4*value_count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *(de->sValue4 + i) = __builtin_bswap32(*(de->sValue4 + i));
+                *(de->s4 + i) = __builtin_bswap32(*(de->s4 + i));
             }
         }
 
     } else if (type == FLOAT) {
         if (value_count <= 1) {     // Value presents
             value = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->fValue4 = calloc(value_count, 4);
-            memcpy(de->fValue4, &value, 4*value_count);
+            de->Value_Offset = 0;
+            de->f4 = calloc(value_count, 4);
+            memcpy(de->f4, &value, 4*value_count);
 
         } else {                    // Offset presents
             offset = de->Value_Offset;
-            de->Value_Offset = 0;   // clear the Value_Offset field
-            de->fValue4 = calloc(value_count, 4);
-            memcpy(de->fValue4, ifh + offset, 4*value_count);
+            de->Value_Offset = 0;
+            de->f4 = calloc(value_count, 4);
+            memcpy(de->f4, ifh + offset, 4*value_count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *(de->fValue4 + i) = __builtin_bswap32(*(de->fValue4 + i));
+                *(de->f4 + i) = __builtin_bswap32(*(de->f4 + i));
             }
         }
 
@@ -252,13 +252,13 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         } else {
             offset = de->Value_Offset;
         }
-        de->Value_Offset = 0;                   // clear the Value_Offset field
-        de->uValue4 = calloc(2*value_count, 4); // a RATIONAL consists of two LONGs
-        memcpy(de->uValue4, ifh + offset, 8*value_count);
+        de->Value_Offset = 0;              // clear the Value_Offset field
+        de->u4 = calloc(2*value_count, 4); // a RATIONAL consists of two LONGs
+        memcpy(de->u4, ifh + offset, 8*value_count);
 
         if (need_byte_swap) {
             for (int i = 0; i < 2*value_count; i++) {
-                *(de->uValue4 + i) = __builtin_bswap32(*(de->uValue4 + i));
+                *(de->u4 + i) = __builtin_bswap32(*(de->u4 + i));
             }
         }
 
@@ -269,13 +269,13 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         } else {
             offset = de->Value_Offset;
         }
-        de->Value_Offset = 0;                   // clear the Value_Offset field
-        de->sValue4 = calloc(2*value_count, 4); // a SRATIONAL consists of two SLONGs
-        memcpy(de->sValue4, ifh + offset, 8*value_count);
+        de->Value_Offset = 0;
+        de->s4 = calloc(2*value_count, 4); // a SRATIONAL consists of two SLONGs
+        memcpy(de->s4, ifh + offset, 8*value_count);
 
         if (need_byte_swap) {
             for (int i = 0; i < 2*value_count; i++) {
-                *(de->sValue4 + i) = __builtin_bswap32(*(de->sValue4 + i));
+                *(de->s4 + i) = __builtin_bswap32(*(de->s4 + i));
             }
         }
 
@@ -286,13 +286,13 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         } else {
             offset = de->Value_Offset;
         }
-        de->Value_Offset = 0; // clear the Value_Offset field
-        de->fValue8 = calloc(value_count, 8);
-        memcpy(de->fValue8, ifh + offset, value_count);
+        de->Value_Offset = 0;
+        de->f8 = calloc(value_count, 8);
+        memcpy(de->f8, ifh + offset, value_count);
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *(de->fValue8 + i) = __builtin_bswap64(*(de->fValue8 + i));
+                *(de->f8 + i) = __builtin_bswap64(*(de->f8 + i));
             }
         }
     }
@@ -300,7 +300,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
     if (tag == 0x8769) {
         /* Construct Exif IFD and print information */
         struct Image_File_Directory *exif_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        uint8_t *from = ifh + *(de->uValue4);
+        uint8_t *from = ifh + *(de->u4);
         exif_construct_ifd(exif_ifd, from, ifh);
         image_file_directory_print_info(exif_ifd);
     } else if (tag == 0x8825) {

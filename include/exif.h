@@ -52,14 +52,14 @@ struct __attribute__((packed)) Directory_Entry {
         uint32_t Value_Offset; /* Bytes 8-11 */
 
         /* The following is for the ease of programming when evaluating the Value */
-        uint8_t  *uValue1; /* stores a sequence of unsigned int Values each 1 byte,  i.e., Type BYTE, ASCII, SBYTE, UNDEFINED */
-        uint16_t *uValue2; /* stores a sequence of unsigned int Values each 2 bytes, i.e., Type SHORT */
-        uint32_t *uValue4; /* stores a sequence of unsigned int Values each 4 bytes, i.e., Type LONG, RATIONAL */
-        int8_t   *sValue1; /* stores a sequence of signed int Values each 1 byte,  i.e., Type SBYTE */
-        int16_t  *sValue2; /* stores a sequence of signed int Values each 2 bytes, i.e., Type SSHORT */
-        int32_t  *sValue4; /* stores a sequence of signed int Values each 4 bytes, i.e., Type SLONG, SRATIONAL */
-        float    *fValue4; /* stores a sequence of single precision floating Values each 4 bytes, i.e., Type FLOAT */
-        double   *fValue8; /* stores a sequence of double precision floating Values each 8 bytes, i.e., Type DOUBLE */
+        uint8_t  *u1; /* stores a sequence of unsigned int Values each 1 byte,  i.e., Type BYTE, ASCII, SBYTE, UNDEFINED */
+        uint16_t *u2; /* stores a sequence of unsigned int Values each 2 bytes, i.e., Type SHORT */
+        uint32_t *u4; /* stores a sequence of unsigned int Values each 4 bytes, i.e., Type LONG, RATIONAL */
+        int8_t   *s1; /* stores a sequence of signed int Values each 1 byte,  i.e., Type SBYTE */
+        int16_t  *s2; /* stores a sequence of signed int Values each 2 bytes, i.e., Type SSHORT */
+        int32_t  *s4; /* stores a sequence of signed int Values each 4 bytes, i.e., Type SLONG, SRATIONAL */
+        float    *f4; /* stores a sequence of single precision floating Values each 4 bytes, i.e., Type FLOAT */
+        double   *f8; /* stores a sequence of double precision floating Values each 8 bytes, i.e., Type DOUBLE */
     };
 };
 
