@@ -1,4 +1,4 @@
-/* TIFF fields [TIFF Rev. 6.0] */
+/* TIFF fields [TIFF Rev 6.0] */
 #define Make             0x010F /* Manufacturer of the scanner, video digitizer, or other type of equipment used to generate the image */
 #define Model            0x0110 /* The model name or number of the scanner, video digitizer, or other type of equipment used to generate the image */
 #define Orientation      0x0112 /* The orientation of the image with respect to the rows and columns. */

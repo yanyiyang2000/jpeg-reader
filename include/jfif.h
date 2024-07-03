@@ -5,7 +5,8 @@
 #define JFIF_H
 
 /**
- * [JFIF v1.02, p5]
+ * [JFIF v1.02, p.5]
+ * 
  * JFIF Marker Segment
  * 
  * @note The byte order of the fields is big-endian.

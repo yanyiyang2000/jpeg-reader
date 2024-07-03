@@ -6,6 +6,7 @@
 
 /**
  * [TIFF Rev 6.0, p13]
+ * 
  * Byte order used with the file (Exif Marker Segment)
  */
 #define BYTE_ORDER_LITTLE_ENDIAN 0x4949
@@ -13,6 +14,7 @@
 
 /**
  * [TIFF Rev 6.0, p15-16]
+ * 
  * Field types
  */
 #define BYTE       1 /* 8-bit unsigned integer */
@@ -29,16 +31,17 @@
 #define DOUBLE    12 /* Double precision (8-byte) IEEE format */
 
 /**
- * [TIFF Rev 6.0, p14-15]
+ * [TIFF Rev 6.0, pp.14-15]
+ * 
  * Each 12-byte Directory Entry (DE) has the following format:
  * - Bytes 0-1:  The Tag that identifies the field.
  * - Bytes 2-3:  The field Type.
  * - Bytes 4-7:  The number of values, Count of the indicated Type.
- * - Bytes 8-11: The Value Offset, the file offset (in bytes) of the Value for the field. The Value is expected to begin 
- *               on a word boundary; the corresponding Value Offset will thus be an even number. This file offset may 
+ * - Bytes 8-11: The Value Offset, the file offset (in bytes) of the Value for the field. The Value is expected to begin
+ *               on a word boundary; the corresponding Value Offset will thus be an even number. This file offset may
  *               point anywhere in the file, even after the image data.
  * 
- * The value of the Count part of an ASCII field entry includes the NUL. If padding is necessary, the Count does not 
+ * The value of the Count part of an ASCII field entry includes the NUL. If padding is necessary, the Count does not
  * include the pad byte.
  */
 struct __attribute__((packed)) Directory_Entry {
@@ -62,7 +65,8 @@ struct __attribute__((packed)) Directory_Entry {
 
 /**
  * [TIFF Rev 6.0, p14]
- * An Image File Directory (IFD) consists of a 2-byte count of the number of Directory Entries, followed by a sequence 
+ * 
+ * An Image File Directory (IFD) consists of a 2-byte count of the number of Directory Entries, followed by a sequence
  * of 12-byte Directory Entries, followed by a 4-byte offset of the next IFD (or 0 if none).
  * 
  * @note 4 bytes of 0 are followed after the last IFD.
@@ -75,14 +79,15 @@ struct Image_File_Directory {
 };
 
 /**
- * [TIFF Rev 6.0, p13]
+ * [TIFF Rev 6.0, p.13]
+ * 
  * An 8-byte Image File Header (IFH) contains the following information:
- * - Bytes 0-1: The byte order used within the file. Legal values are: 
+ * - Bytes 0-1: The byte order used within the file. Legal values are:
  *                0x4949 (little-endian)
  *                0x4D4D (big-endian)
  * - Bytes 2-3: An arbitrary but carefully chosen number (42)
- * - Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the header 
- *              but must begin on a word boundary. In particular, an Image File Directory may follow the image data it 
+ * - Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the header
+ *              but must begin on a word boundary. In particular, an Image File Directory may follow the image data it
  *              describes.
  */
 struct __attribute__((packed)) Image_File_Header {
@@ -92,7 +97,8 @@ struct __attribute__((packed)) Image_File_Header {
 };
 
 /**
- * [Exif v2.32, p19]
+ * [Exif v2.32, p.19]
+ * 
  * Exif Marker Segment
  */
 struct __attribute__((packed)) Exif_Segment {
@@ -120,7 +126,7 @@ void directory_entry_print_info(struct Directory_Entry *de);
 /**
  * This functions evaluates the Value Offset field of the DE and finds the actual Value if the Value Offset is stored.
  * 
- * @note If the Value is shorter than 4 bytes, it is left-justified within the 4-byte Value Offset. [TIFF Rev. 6.0, p15]
+ * @note If the Value is shorter than 4 bytes, it is left-justified within the 4-byte Value Offset. [TIFF Rev 6.0, p.15]
  * 
  * @param de  The pointer to the first byte of the DE
  * @param ifh The pointer to the first byte of the Image File Header (IFD) of APP1 Marker Segment
