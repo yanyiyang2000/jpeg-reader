@@ -16,6 +16,7 @@
  */
 uint16_t get_segment_length(uint8_t *offset) {
     uint16_t length = 0;
+    
     memcpy(&length, offset + 2, 2);
     return __builtin_bswap16(length);
 }
@@ -24,7 +25,7 @@ uint16_t get_segment_length(uint8_t *offset) {
 int main() {
     FILE    *img          = NULL;   // file descriptor of the image                        
     uint8_t buffer[10240] = {0};    // buffer containing image data
-    uint8_t *offset       = NULL;   // pointer to the current byte
+    uint8_t *ptr          = NULL;   // pointer to the current byte
 
     struct Marker_Segment *segments[16] = {0};  // list of Marker Segment pointers
     uint8_t               id[2]         = {0};  // the identifier of the current Marker Segment
@@ -35,10 +36,10 @@ int main() {
     fread(buffer, 10240, 1, img);
 
     /* Point to the first byte of the image */
-    offset = buffer;
+    ptr = buffer;
 
     /* Skip SOI (FF D8) */
-    offset += 2;
+    ptr += 2;
 
     /**
      * Parse Marker Segment, since the number of Marker Segment is unknown, a list of 16 Marker Segment pointers will
@@ -46,18 +47,18 @@ int main() {
      */
     do {
         /* Obtain the length of the Marker Segment */
-        seg_len = get_segment_length(offset);
+        seg_len = get_segment_length(ptr);
 
         /* Construct Marker Segment and skip it */
         segments[seg_idx] = calloc(1, sizeof(struct Marker_Segment));
-        offset = construct_marker_segment(segments[seg_idx], offset, seg_len);
+        ptr = construct_marker_segment(segments[seg_idx], ptr, seg_len);
         seg_idx += 1;
 
         /**
          * Obtain the identifier of the Marker Segment. Since there is at least 1 Marker Segment, we only need to
          * check the existance of Marker Segment after constructing the first one.
          */
-        memcpy(id, offset, 2);
+        memcpy(id, ptr, 2);
 
     } while ( (id[1] & 0xF0) == 0xE0 );
 }
