@@ -322,7 +322,7 @@ void image_file_directory_print_info(struct Image_File_Directory *ifd) {
 }
 
 uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh) {
-    uint8_t *ptr = from;
+    uint8_t *ptr = from; // pointer to the current byte
 
     /* Obtain each DE */
     for (int i = 0; i < de_count; i++) {
@@ -338,10 +338,9 @@ uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t d
 }
 
 uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint8_t *ifh) {
-    uint8_t *ptr        = from; // pointer to the current byte
-    uint16_t de_count   = 0;    // count of DE
-    uint32_t ifd_offset = 0;    // offset of IFD
-
+    uint8_t *ptr               = from; // pointer to the current byte
+    uint16_t de_count          = 0;    // count of DE
+    uint32_t ifd_offset        = 0;    // offset of IFD
     struct Directory_Entry *de = NULL; // pointer to the current DE
 
     /* Obtain the DE Count field of the IFD */
@@ -371,7 +370,7 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
      * Marker Segment ends.
      */
     if (ifd_offset > 0) {
-        ptr = ifh + ifd_offset; // skip this IFD, now pointing at the next IFD
+        ptr = ifh + ifd_offset;
     } // if this is the last IFD, offset value would not be useful so nothing is done here
 
     return ptr;
@@ -417,7 +416,7 @@ uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t
         curr_ifd = next_ifd;
     }
 
-    /* Reset the offset to make it point to the next Marker Segment */
+    /* Point to the next Marker Segment */
     ptr = from + seg_len;
 
     return ptr;
