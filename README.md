@@ -18,7 +18,7 @@ Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**A
 | Image Data | -             | variable |
 | EOI        | `FF D9`       | variable |
 
-[^1.1]: Specified in Exif v2.32, p19 and ISO 10918-1, p33
+[^1.1]: Specified in Exif v2.32, p19 and ISO 10918-1, p.33
 [^1.2]: Unless otherwise stated, all monospace texts are in hexadecimal
 [^1.3]: Unless otherwise stated, all lengths are in bytes
 
@@ -38,7 +38,7 @@ We only care about the information stored in **APP0** and **APP1**.
 | Xthumbnail  | 2        |                        |
 | Ythumbnail  | 2        |                        |
 
-[^2.1]: Specified in JFIF v1.02, p5
+[^2.1]: Specified in JFIF v1.02, p.5
 [^2.2]: All values of **APP0** are in big-endian
 [^2.3]: ASCII string "JFIF" terminated by a null byte
 
@@ -57,7 +57,7 @@ We only care about the information stored in **APP0** and **APP1**.
 | ...                   | ...      |                           |
 | nth IFD               | variable |                           |
 
-[^3.1]: Specified in Exif v2.32, p19
+[^3.1]: Specified in Exif v2.32, p.19
 [^3.2]: Value of Length is in big-endian
 [^3.3]: ASCII string "Exif" terminated by two null bytes
 
@@ -69,7 +69,7 @@ We only care about the information stored in **APP0** and **APP1**.
 | Magic Number            | 2        | `00 2A` |
 | Offset of 0th IFD[^4.4] | 4        |         |
 
-[^4.1]: Specified in TIFF rev6.0, p13
+[^4.1]: Specified in TIFF rev6.0, p.13
 [^4.2]: Byte Order dictates the endianess of the following values
 [^4.3]: `49 49` for small endian and `4D 4D` for big endian
 [^4.4]: Offset is from the first byte of IFH
@@ -87,7 +87,7 @@ Each **IFD** is composed of multiple *Directory Entries* (**DE**s).
 | Offset of Next IFD[^5.2] | 4        | [^5.3]  |
 | IFD Value                | variable |         |
 
-[^5.1]: Specified in Exif v2.32, p24
+[^5.1]: Specified in Exif v2.32, p.24
 [^5.2]: Offset is from the first byte of IFH
 [^5.3]: `00 00 00 00` for the last IFD
 
@@ -102,7 +102,7 @@ Each **DE** is 12-byte.
 | Value Count        | 4        |        |
 | Value/Offset[^6.2] | 4        |        |
 
-[^6.1]: Specified in TIFF rev6.0, p14
+[^6.1]: Specified in TIFF rev6.0, p.14
 [^6.2]: If 4 bytes are not enough to hold all the values, this value indicates the offset of the actual values from the first byte of IFH
 
 # Workflow Overview
@@ -182,14 +182,14 @@ struct __attribute__((packed)) Directory_Entry {
     uint32_t Value_Count;
     union {
         uint32_t Value_Offset;
-        uint8_t  *uValue1;
-        uint16_t *uValue2;
-        uint32_t *uValue4;
-        int8_t   *sValue1;
-        int16_t  *sValue2;
-        int32_t  *sValue4;
-        float    *fValue4;
-        double   *fValue8;
+        uint8_t  *u1;
+        uint16_t *u2;
+        uint32_t *u4;
+        int8_t   *s1;
+        int16_t  *s2;
+        int32_t  *s4;
+        float    *f4;
+        double   *f8;
     };
 };
 ```
