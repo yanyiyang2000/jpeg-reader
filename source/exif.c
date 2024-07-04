@@ -74,18 +74,21 @@ void directory_entry_print_info(struct Directory_Entry *de) {
             /* Print 32 spaces before printing the value */
             printf("%*c%"PRIu32"/%"PRIu32"\n", 32, ' ', *(ptr + 2*i), *(ptr + 2*i + 1));
         }
+
     } else if (type == SRATIONAL) {
         int32_t *ptr = de->s4;
         printf("0x%-.4X | %-6d | %-11d | %"PRId32"/%"PRId32"\n", tag, type, value_count, *ptr, *(ptr + 1));
         for (int i = 1; i < value_count; i++) {
             printf("%32"PRId32"/%"PRId32"\n", *(ptr + 2*i), *(ptr + 2*i + 1));
         }
+
     } else if (type == FLOAT) {
         float *ptr = de->f4;
         printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
             printf("%32f\n", *(ptr + i));
         }
+        
     } else if (type == DOUBLE) {
         double *ptr = de->f8;
         printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
