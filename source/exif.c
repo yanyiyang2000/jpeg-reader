@@ -110,12 +110,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
      * Value_Offset.
      */
     if ( (type == BYTE) | (type == ASCII) | (type == UNDEFINED) ) {
+
         if (value_count <= 4) {     // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
             de->u1 = calloc(value_count, 1);
             memcpy(de->u1, &value, value_count);
-
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -128,12 +128,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == SBYTE) {
+
         if (value_count <= 4) {     // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
             de->s1 = calloc(value_count, 1);
             memcpy(de->s1, &value, value_count);
-
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -146,12 +146,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == SHORT) {
+
         if (value_count <= 2) {     // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
             de->u2 = calloc(value_count, 2);
             memcpy(de->u2, &value, 2*value_count);
-
         } else {                    // Offset presents
             offset = de->Value_Offset;
             de->Value_Offset = 0;
@@ -166,12 +166,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == SSHORT) {
+
         if (value_count <= 2) {     // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
             de->s2 = calloc(value_count, 2);
             memcpy(de->s2, &value, 2*value_count);
-
         } else {                    // Offset presents
             offset = de->Value_Offset;
             de->Value_Offset = 0;
@@ -186,12 +186,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == LONG) {
+
         if (value_count <= 1) {     // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
             de->u4 = calloc(value_count, 4);
             memcpy(de->u4, &value, 4*value_count);
-
         } else {                    // Offset presents
             offset = de->Value_Offset;
             de->Value_Offset = 0;
@@ -206,12 +206,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == SLONG) {
+
         if (value_count <= 1) {     // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
             de->s4 = calloc(value_count, 4);
             memcpy(de->s4, &value, 4*value_count);
-
         } else {                    // Offset presents
             offset = de->Value_Offset;
             de->Value_Offset = 0;
@@ -226,12 +226,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == FLOAT) {
+
         if (value_count <= 1) {     // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
             de->f4 = calloc(value_count, 4);
             memcpy(de->f4, &value, 4*value_count);
-
         } else {                    // Offset presents
             offset = de->Value_Offset;
             de->Value_Offset = 0;
@@ -246,13 +246,14 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == RATIONAL) {
+
         /* Since a RATIONAL takes at least 8 bytes, we can only retrieve using the Offset. */
         if (need_byte_swap) {
             offset = __builtin_bswap32(de->Value_Offset);
         } else {
             offset = de->Value_Offset;
         }
-        de->Value_Offset = 0;              // clear the Value_Offset field
+        de->Value_Offset = 0;
         de->u4 = calloc(2*value_count, 4); // a RATIONAL consists of two LONGs
         memcpy(de->u4, ifh + offset, 8*value_count);
 
@@ -263,6 +264,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == SRATIONAL) {
+
         /* Since SRATIONAL takes at least 8 bytes, we can only retrieve using the Offset. */
         if (need_byte_swap) {
             offset = __builtin_bswap32(de->Value_Offset);
@@ -280,6 +282,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         }
 
     } else if (type == DOUBLE) {
+        
         /* Since DOUBLE takes at least 8 bytes, we can only retrieve using the Offset. */
         if (need_byte_swap) {
             offset = __builtin_bswap32(de->Value_Offset);

@@ -5,7 +5,8 @@
 #include "jfif.h"
 
 uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t seg_len) {
-    uint8_t *ptr = from; // pointer to the current byte
+    uint8_t  *ptr = from; // pointer to the current byte
+    uint16_t n    = 0;    // RGBn field
 
     /* Obtain the JFIF Segment excluding RGBn and AMPF fields */
     memcpy(to->Identifier, ptr, 14);
@@ -17,10 +18,10 @@ uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t
     ptr += 14;
 
     /* Obtain the RGBn field if exists */
-    uint16_t n = to->XThumbnail * to->YThumbnail;   // [JFIF v1.02, p.5]
-    if (n > 0) {                                    // it is possible the length of this field is 0
+    n = to->XThumbnail * to->YThumbnail;   // [JFIF v1.02, p.5]
+    if (n > 0) {                           // it is possible the length of this field is 0
         to->RGBn = calloc(1, 3*n);
-        ptr += n;                                   // skip the RGBn field
+        ptr += n;                          // skip the RGBn field
     }
 
     /* Obtain the AMPF field if exists */
