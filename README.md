@@ -18,7 +18,7 @@ Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**A
 | Image Data | -             | variable |
 | EOI        | `FF D9`       | variable |
 
-[^1.1]: Specified in Exif v2.32, p19 and ISO 10918-1, p.33
+[^1.1]: Specified in Exif v2.32, p.19 and ISO 10918-1, p.33
 [^1.2]: Unless otherwise stated, all monospace texts are in hexadecimal
 [^1.3]: Unless otherwise stated, all lengths are in bytes
 

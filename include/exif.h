@@ -45,21 +45,12 @@
  * include the pad byte.
  */
 struct __attribute__((packed)) Directory_Entry {
-    uint16_t Tag;          /* Bytes 0-1 */
-    uint16_t Type;         /* Bytes 2-3 */
-    uint32_t Value_Count;  /* Bytes 4-7 */
+    uint16_t Tag;               /* Bytes 0-1 */
+    uint16_t Type;              /* Bytes 2-3 */
+    uint32_t Value_Count;       /* Bytes 4-7 */
     union {
-        uint32_t Value_Offset; /* Bytes 8-11 */
-
-        /* The following is for the ease of programming when evaluating the Value */
-        uint8_t  *u1; /* stores a sequence of unsigned int Values each 1 byte,  i.e., Type BYTE, ASCII, SBYTE, UNDEFINED */
-        uint16_t *u2; /* stores a sequence of unsigned int Values each 2 bytes, i.e., Type SHORT */
-        uint32_t *u4; /* stores a sequence of unsigned int Values each 4 bytes, i.e., Type LONG, RATIONAL */
-        int8_t   *s1; /* stores a sequence of signed int Values each 1 byte,  i.e., Type SBYTE */
-        int16_t  *s2; /* stores a sequence of signed int Values each 2 bytes, i.e., Type SSHORT */
-        int32_t  *s4; /* stores a sequence of signed int Values each 4 bytes, i.e., Type SLONG, SRATIONAL */
-        float    *f4; /* stores a sequence of single precision floating Values each 4 bytes, i.e., Type FLOAT */
-        double   *f8; /* stores a sequence of double precision floating Values each 8 bytes, i.e., Type DOUBLE */
+        uint32_t Value_Offset;  /* Bytes 8-11 */
+        void     *Value;        /* Bytes 8-11 */
     };
 };
 
