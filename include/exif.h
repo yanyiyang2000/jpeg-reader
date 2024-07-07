@@ -13,78 +13,86 @@
 #define BYTE_ORDER_BIG_ENDIAN    0x4D4D
 
 /**
- * [TIFF Rev 6.0, p15-16]
+ * [TIFF Rev 6.0, pp.15-16]
  * 
  * Field types
  */
-#define BYTE       1 /* 8-bit unsigned integer */
-#define ASCII      2 /* 8-bit byte that contains a 7-bit ASCII code; the last byte must be NUL */
-#define SHORT      3 /* 16-bit (2-byte) unsigned integer */
-#define LONG       4 /* 32-bit (4-byte) unsigned integer */
-#define RATIONAL   5 /* Two LONGs: the first represents the numerator of a fraction, the second the denominator */
-#define SBYTE      6 /* 8-bit signed (twos-complement) integer */
-#define UNDEFINED  7 /* 8-bit byte that may contain anything, depending on the definition of the field. */
-#define SSHORT     8 /* 16-bit (2-byte) signed (twos-complement) integer */
-#define SLONG      9 /* 32-bit (4-byte) signed (twos-complement) integer */
-#define SRATIONAL 10 /* Two SLONG’s: the first represents the numerator of a fraction, the second the denominator */
-#define FLOAT     11 /* Single precision (4-byte) IEEE format */
-#define DOUBLE    12 /* Double precision (8-byte) IEEE format */
+#define BYTE       1    /* 8-bit unsigned integer */
+#define ASCII      2    /* 8-bit byte that contains a 7-bit ASCII code; the last byte must be NUL */
+#define SHORT      3    /* 16-bit (2-byte) unsigned integer */
+#define LONG       4    /* 32-bit (4-byte) unsigned integer */
+#define RATIONAL   5    /* Two LONGs: the first represents the numerator of a fraction, the second the denominator */
+#define SBYTE      6    /* 8-bit signed (twos-complement) integer */
+#define UNDEFINED  7    /* 8-bit byte that may contain anything, depending on the definition of the field. */
+#define SSHORT     8    /* 16-bit (2-byte) signed (twos-complement) integer */
+#define SLONG      9    /* 32-bit (4-byte) signed (twos-complement) integer */
+#define SRATIONAL 10    /* Two SLONG’s: the first represents the numerator of a fraction, the second the denominator */
+#define FLOAT     11    /* Single precision (4-byte) IEEE format */
+#define DOUBLE    12    /* Double precision (8-byte) IEEE format */
 
 /**
  * [TIFF Rev 6.0, pp.14-15]
  * 
- * Each 12-byte Directory Entry (DE) has the following format:
- * - Bytes 0-1:  The Tag that identifies the field.
- * - Bytes 2-3:  The field Type.
- * - Bytes 4-7:  The number of values, Count of the indicated Type.
- * - Bytes 8-11: The Value Offset, the file offset (in bytes) of the Value for the field. The Value is expected to begin
- *               on a word boundary; the corresponding Value Offset will thus be an even number. This file offset may
- *               point anywhere in the file, even after the image data.
+ * A 12-byte Directory Entry (DE) has the following format:
  * 
- * The value of the Count part of an ASCII field entry includes the NUL. If padding is necessary, the Count does not
+ *  - Bytes 0-1:  The Tag that identifies the field.
+ * 
+ *  - Bytes 2-3:  The field Type.
+ * 
+ *  - Bytes 4-7:  The number of values, Count of the indicated Type.
+ * 
+ *  - Bytes 8-11: The Value Offset, the file offset (in bytes) of the Value for the field. The Value is expected to begin
+ *                on a word boundary; the corresponding Value Offset will thus be an even number. This file offset may
+ *                point anywhere in the file, even after the image data.
+ * 
+ * The value of the Count part of an ASCII field entry includes the NULL byte. If padding is necessary, the Count does not
  * include the pad byte.
  */
 struct __attribute__((packed)) Directory_Entry {
-    uint16_t Tag;               /* Bytes 0-1 */
-    uint16_t Type;              /* Bytes 2-3 */
-    uint32_t Value_Count;       /* Bytes 4-7 */
+    uint16_t Tag;               /* The field tag */
+    uint16_t Type;              /* The field type */
+    uint32_t Value_Count;       /* The number of values */
     union {
-        uint32_t Value_Offset;  /* Bytes 8-11 */
-        void     *Value;        /* Bytes 8-11 */
+        uint32_t Value_Offset;  /* The offset of the values */
+        void     *Value;        /* The pointer to the values */
     };
 };
 
 /**
- * [TIFF Rev 6.0, p14]
+ * [TIFF Rev 6.0, p.14]
  * 
  * An Image File Directory (IFD) consists of a 2-byte count of the number of Directory Entries, followed by a sequence
  * of 12-byte Directory Entries, followed by a 4-byte offset of the next IFD (or 0 if none).
  * 
- * @note 4 bytes of 0 are followed after the last IFD.
+ * @note The last IFD is followed by 4 NULL bytes.
+ * 
  */
 struct Image_File_Directory {
-    uint16_t                     DE_Count;   /* The number of directory entries */
-    struct Directory_Entry       *DE;        /* Pointer to the first DE, for ease of programming */
-    uint32_t                     IFD_Offset; /* The offset (in bytes) of the next IFD from the Image File Header */
-    struct Image_File_Directory  *Next_IFD;  /* Pointer to the next IFD, for ease of programming, not defined by TIFF */
+    uint16_t                     DE_Count;      /* The number of Directory Entries */
+    struct Directory_Entry       *DE;           /* The pointer to the first DE, for ease of programming */
+    uint32_t                     IFD_Offset;    /* The offset (in bytes) of the next IFD from the Image File Header */
+    struct Image_File_Directory  *Next_IFD;     /* The pointer to the next IFD, for ease of programming, not defined by TIFF */
 };
 
 /**
  * [TIFF Rev 6.0, p.13]
  * 
- * An 8-byte Image File Header (IFH) contains the following information:
- * - Bytes 0-1: The byte order used within the file. Legal values are:
- *                0x4949 (little-endian)
- *                0x4D4D (big-endian)
- * - Bytes 2-3: An arbitrary but carefully chosen number (42)
- * - Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the header
- *              but must begin on a word boundary. In particular, an Image File Directory may follow the image data it
- *              describes.
+ * An 8-byte Image File Header (IFH) has the following format:
+ * 
+ *  - Bytes 0-1: The byte order used within the file.
+ *               0x4949 (little-endian)
+ *               0x4D4D (big-endian)
+ * 
+ *  - Bytes 2-3: An arbitrary but carefully chosen number (42).
+ * 
+ *  - Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the header
+ *               but must begin on a word boundary. In particular, an Image File Directory may follow the image data it
+ *               describes.
  */
 struct __attribute__((packed)) Image_File_Header {
-    uint16_t Byte_Order;   /* Bytes 0-1 */
-    uint16_t Magic_Number; /* Bytes 2-3 */
-    uint32_t IFD_Offset;   /* Bytes 4-7 */
+    uint16_t Byte_Order;    /* The byte order used within the file */
+    uint16_t Magic_Number;  /* An arbitrary but carefully chosen number (42) */
+    uint32_t IFD_Offset;    /* The offset of the first IFD in bytes */
 };
 
 /**
@@ -93,9 +101,9 @@ struct __attribute__((packed)) Image_File_Header {
  * Exif Marker Segment
  */
 struct __attribute__((packed)) Exif_Segment {
-    uint8_t                     Identifier[6]; /* Double NULL terminated ASCII string "Exif\0\0" */
-    struct Image_File_Header    IFH;           /* Image file header */
-    struct Image_File_Directory *IFDs;         /* Pointer to the first IFDs */
+    uint8_t                     Identifier[6];  /* The identifier of the Segment. (i.e., Double NULL-terminated ASCII string "Exif\0\0") */
+    struct Image_File_Header    IFH;            /* The Image File Header */
+    struct Image_File_Directory *IFDs;          /* The pointer to the first IFD */
 };
 
 /**
