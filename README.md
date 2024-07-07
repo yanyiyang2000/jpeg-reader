@@ -18,7 +18,7 @@ Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**A
 | Image Data | -             | variable |
 | EOI        | `FF D9`       | variable |
 
-[^1.1]: Specified in Exif v2.32, p.19 and ISO 10918-1, p.33
+[^1.1]: Specified in Exif v2.32, p.19 and ISO 10918-1:1994, p.33
 [^1.2]: Unless otherwise stated, all monospace texts are in hexadecimal
 [^1.3]: Unless otherwise stated, all lengths are in bytes
 
@@ -182,14 +182,14 @@ struct __attribute__((packed)) Directory_Entry {
     uint32_t Value_Count;
     union {
         uint32_t Value_Offset;
-        uint8_t  *u1;
-        uint16_t *u2;
-        uint32_t *u4;
-        int8_t   *s1;
-        int16_t  *s2;
-        int32_t  *s4;
-        float    *f4;
-        double   *f8;
+        void     *Value;
     };
 };
 ```
+
+# Reference
+- ISO/IEC 10918-1:1994 (JPEG)
+- [JFIF Verion 1.02](/assets/JFIF_Version_1.02.pdf)
+- [Exif Version 3.0](/assets/Exif_Version_3.0.pdf)
+- [TIFF Revision 6.0](/assets/TIFF_Revision_6.0.pdf)
+- [TIFF Tag Reference](https://www.awaresystems.be/imaging/tiff/tifftags.html)

@@ -17,11 +17,11 @@
 #define JPEGInterchangeFormatLength 0x0202  // The length of JPEG data in bytes
 #define YCbCrPositioning            0x0213  // The positioning of subsampled chrominance components relative to luminance samples
 
-/* Private Tags */
+/* Private Tags [Exif v3.0, pp.38-39] */
 #define Exif_IFD_Pointer            0x8769  // A pointer to the Exif IFD <TODO>
 #define GPS_Info_IFD_Pointer        0x8825  // A pointer to the GPS Info IFD <TODO>
 
-/* Private IFD (Exif IFD) Tags [Exif v2.32, pp.42-43] */
+/* Private IFD (Exif IFD) Tags [Exif v3.0, pp.54-57] */
 #define ExposureTime                0x829A  // The exposure time in seconds
 #define FNumber                     0x829D  // The F number
 #define ExposureProgram             0x8822  // 0 = Not define. 1 = Manual. 2 = Normal program. 3 = Aperture priority. 4 = Shutter priority. 5 = Creative program. 6 = Action program. 7 = Portrait mode. 8 = Landscape mode.
@@ -57,7 +57,7 @@
 #define LensModel                   0xA434  // The model name or number of the lens
 #define CompositeImage              0xA460  // 0 = Unknown. 1 = Not a composite image. 2 = General composite image. 3 = Composite image captured while shooting.
 
-/* Private IFD (GPS Info IFD) Tags [Exif v2.32, p.68] */
+/* Private IFD (GPS Info IFD) Tags [Exif v3.0, pp.90-91] */
 #define GPSLatitudeRef              0x0001  // N = North latitude. S = South latitude.
 #define GPSLatitude                 0x0002  // The latitude
 #define GPSLongitudeRef             0x0003  // E = East longitude. W = West longitude.

@@ -13,7 +13,7 @@
 #define BYTE_ORDER_BIG_ENDIAN    0x4D4D
 
 /**
- * [TIFF Rev 6.0, pp.15-16]
+ * [TIFF Rev. 6.0, pp.15-16]
  * 
  * Field types
  */
@@ -31,7 +31,7 @@
 #define DOUBLE    12    /* Double precision (8-byte) IEEE format */
 
 /**
- * [TIFF Rev 6.0, pp.14-15]
+ * [TIFF Rev. 6.0, pp.14-15]
  * 
  * A 12-byte Directory Entry (DE) has the following format:
  * 
@@ -59,7 +59,7 @@ struct __attribute__((packed)) Directory_Entry {
 };
 
 /**
- * [TIFF Rev 6.0, p.14]
+ * [TIFF Rev. 6.0, p.14]
  * 
  * An Image File Directory (IFD) consists of a 2-byte count of the number of Directory Entries, followed by a sequence
  * of 12-byte Directory Entries, followed by a 4-byte offset of the next IFD (or 0 if none).
@@ -75,7 +75,7 @@ struct Image_File_Directory {
 };
 
 /**
- * [TIFF Rev 6.0, p.13]
+ * [TIFF Rev. 6.0, p.13]
  * 
  * An 8-byte Image File Header (IFH) has the following format:
  * 
