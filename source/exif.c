@@ -8,7 +8,7 @@
 #include "exif.h"
 
 /* Flag indicating mismatch between the image and machine endianess. */
-bool need_byte_swap = false;
+bool need_byte_swap = true;
 
 void directory_entry_byte_swap(struct Directory_Entry *de) {
     de->Tag         = __builtin_bswap16(de->Tag);
@@ -18,7 +18,7 @@ void directory_entry_byte_swap(struct Directory_Entry *de) {
 
 void directory_entry_print_info(struct Directory_Entry *de) {
     uint16_t tag         = de->Tag;
-    uint16_t type        = de->Type;
+    uint32_t type        = de->Type;
     uint32_t value_count = de->Value_Count;
 
     if (type == BYTE) {
@@ -102,15 +102,15 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
     uint16_t tag         = de->Tag;
     uint16_t type        = de->Type;
     uint32_t value_count = de->Value_Count;
-    uint16_t offset      = 0;
-    uint32_t value       = 0;
+
+    uint32_t offset      = 0; // value offset
+    uint32_t value       = 0; // actual value
 
     /**
      * Obtain the Value or Offset of the Value by evaluating the Value Offset field.
      * 
-     * If sizeof(Type) * Value_Count <= 4, replace the Value_Offset field with the data type (e.g., uValue1) indicated 
-     * by the Type field, otherwise allocate memory for data type indicated by the Type field and copy the Value using
-     * Value_Offset.
+     * If sizeof(Type) * Value_Count <= 4, replace the Value_Offset field with the actual data, 
+     * otherwise allocate memory for data type indicated by the Type field and copy the Value using Value_Offset.
      */
     if ( (type == BYTE) | (type == ASCII) | (type == UNDEFINED) ) {
 
@@ -156,7 +156,11 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             de->Value = calloc(value_count, 2);
             memcpy(de->Value, &value, 2*value_count);
         } else {                    // Offset presents
-            offset = de->Value_Offset;
+            if (need_byte_swap) {
+                offset = __builtin_bswap32(de->Value_Offset);
+            } else {
+                offset = de->Value_Offset;
+            }
             de->Value_Offset = 0;
             de->Value = calloc(value_count, 2);
             memcpy(de->Value, ifh + offset, 2*value_count);
@@ -176,7 +180,11 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             de->Value = calloc(value_count, 2);
             memcpy(de->Value, &value, 2*value_count);
         } else {                    // Offset presents
-            offset = de->Value_Offset;
+            if (need_byte_swap) {
+                offset = __builtin_bswap32(de->Value_Offset);
+            } else {
+                offset = de->Value_Offset;
+            }
             de->Value_Offset = 0;
             de->Value = calloc(value_count, 2);
             memcpy(de->Value, ifh + offset, 2*value_count);
@@ -196,7 +204,12 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             de->Value = calloc(value_count, 4);
             memcpy(de->Value, &value, 4*value_count);
         } else {                    // Offset presents
-            offset = de->Value_Offset;
+            // offset = de->Value_Offset;
+            if (need_byte_swap) {
+                offset = __builtin_bswap32(de->Value_Offset);
+            } else {
+                offset = de->Value_Offset;
+            }
             de->Value_Offset = 0;
             de->Value = calloc(value_count, 4);
             memcpy(de->Value, ifh + offset, 4*value_count);
@@ -216,7 +229,11 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             de->Value = calloc(value_count, 4);
             memcpy(de->Value, &value, 4*value_count);
         } else {                    // Offset presents
-            offset = de->Value_Offset;
+            if (need_byte_swap) {
+                offset = __builtin_bswap32(de->Value_Offset);
+            } else {
+                offset = de->Value_Offset;
+            }
             de->Value_Offset = 0;
             de->Value = calloc(value_count, 4);
             memcpy(de->Value, ifh + offset, 4*value_count);
@@ -236,7 +253,11 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             de->Value = calloc(value_count, 4);
             memcpy(de->Value, &value, 4*value_count);
         } else {                    // Offset presents
-            offset = de->Value_Offset;
+            if (need_byte_swap) {
+                offset = __builtin_bswap32(de->Value_Offset);
+            } else {
+                offset = de->Value_Offset;
+            }
             de->Value_Offset = 0;
             de->Value = calloc(value_count, 4);
             memcpy(de->Value, ifh + offset, 4*value_count);
@@ -301,17 +322,32 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 *( (double *)(de->Value) + i ) = __builtin_bswap64(*( (double *)(de->Value) + i ));
             }
         }
+    } else if (type == UNDEFINED) {
+        /**
+         * TODO:
+         * So far only Tags MakerNote, FlashpixVersion and SceneType are of type UNDEFINED so this is not urgent.
+         */
     }
 
     if (tag == 0x8769) {
+
         struct Image_File_Directory *exif_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        uint8_t *from = ifh + *((uint32_t *)(de->Value));
+        uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
 
         /* Construct Exif IFD and print information */
         exif_construct_ifd(exif_ifd, from, ifh);
         image_file_directory_print_info(exif_ifd);
+
     } else if (tag == 0x8825) {
+
         /* TODO: Construct GPS IFD and print information */
+
+        struct Image_File_Directory *gps_ifd = calloc(1, sizeof(struct Image_File_Directory));
+        uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
+
+        /* Construct Exif IFD and print information */
+        exif_construct_ifd(gps_ifd, from, ifh);
+        image_file_directory_print_info(gps_ifd);
     }
 }
 
@@ -345,10 +381,10 @@ uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t d
 }
 
 uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint8_t *ifh) {
-    uint8_t *ptr               = from; // pointer to the current byte
-    uint16_t de_count          = 0;    // count of DE
-    uint32_t ifd_offset        = 0;    // offset of IFD
-    struct Directory_Entry *de = NULL; // pointer to the current DE
+    uint8_t                *ptr       = from; // pointer to the current byte
+    uint16_t               de_count   = 0;    // count of DE
+    uint32_t               ifd_offset = 0;    // offset of IFD
+    struct Directory_Entry *de        = NULL; // pointer to the current DE
 
     /* Obtain the DE Count field of the IFD */
     memcpy(&de_count, ptr, 2);
