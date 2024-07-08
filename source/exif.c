@@ -59,21 +59,21 @@ void directory_entry_print_info(struct Directory_Entry *de) {
     } else if (type == SSHORT) {
         int16_t *ptr = de->Value;
         printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRId16" │\n", name, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
+        for (uint8_t i = 1; i < value_count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId16" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == LONG) {
         uint32_t *ptr = de->Value;
         printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRIu32" │\n", name, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
+        for (uint8_t i = 1; i < value_count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu32" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == SLONG) {
         int32_t *ptr = de->Value;
         printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRId32" │\n", name, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
+        for (uint8_t i = 1; i < value_count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId32" │\n", "", "", "", *(ptr + i));
         }
 
@@ -82,7 +82,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %24"PRIu32"/%-24"PRIu32" │\n", name, type, value_count, *ptr, *(ptr + 1));
         printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49.2f │\n", name, type, value_count, (double)(*ptr)/(*(ptr + 1)));
-        for (int i = 1; i < value_count; i++) {
+        for (uint8_t i = 1; i < value_count; i++) {
             // printf("│ %-27s | %-9s │ %-5s │ %24"PRIu32"/%-24"PRIu32" │\n", "", "", "", *(ptr + i), *(ptr + 2*i + 1));
             printf("│ %-27s | %-9s │ %-5s │ %-49.2f │\n", "", "", "", (double)(*(ptr + i))/(*(ptr + 2*i + 1)));
         }
@@ -92,7 +92,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %24"PRId32"/%-24"PRId32" │\n", name, type, value_count, *ptr, *(ptr + 1));
         printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49.2f │\n", name, type, value_count, (double)(*ptr)/(*(ptr + 1)));
-        for (int i = 1; i < value_count; i++) {
+        for (uint8_t i = 1; i < value_count; i++) {
             // printf("│ %-27s | %-9s │ %-5s │ %24"PRId32"/%-24"PRId32" │\n", "", "", "", *(ptr + i), *(ptr + 2*i + 1));
             printf("│ %-27s | %-9s │ %-5s │ %-49.2f │\n", "", "", "", (double)(*(ptr + i))/(*(ptr + 2*i + 1)));
         }
@@ -100,14 +100,14 @@ void directory_entry_print_info(struct Directory_Entry *de) {
     } else if (type == FLOAT) {
         float *ptr = de->Value;
         printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49f │\n", name, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
+        for (uint8_t i = 1; i < value_count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
         }
         
     } else if (type == DOUBLE) {
         double *ptr = de->Value;
         printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49f │\n", name, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
+        for (uint8_t i = 1; i < value_count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
         }
     } else if (type == UNDEFINED) {
