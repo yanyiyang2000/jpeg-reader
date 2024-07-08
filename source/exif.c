@@ -1,11 +1,12 @@
 #include <stdbool.h>  // true, false
-#include <stdint.h>   // uintXX_t
+#include <stdint.h>   // uintXX_t, intXX_t
 #include <stdio.h>    // printf
 #include <string.h>   // memcpy
 #include <strings.h>  // bzero
 #include <inttypes.h> // PRIX
 
 #include "exif.h"
+#include "tags.h"
 
 /* Flag indicating mismatch between the image and machine endianess. */
 bool need_byte_swap = true;
@@ -21,80 +22,96 @@ void directory_entry_print_info(struct Directory_Entry *de) {
     uint32_t type        = de->Type;
     uint32_t value_count = de->Value_Count;
 
+    char name[64] = {0}; // name of the tag
+
+    /* Obtain the name of the tag */
+    for (uint8_t i = 0; i < (sizeof(tags)/sizeof(struct Tag)); i++) {
+        if (tags[i].Tag == tag) {
+            strcpy(name, tags[i].Name);
+            break;
+        }
+    }
+
     if (type == BYTE) {
         uint8_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu8"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRIu8"\n", *(ptr + i));
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRIu8" │\n", name, type, value_count, *ptr);
+        for (uint8_t i = 1; i < value_count; i++) {
+            printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu8" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == SBYTE) {
         int8_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId8"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId8"\n", *(ptr + i));
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRId8" │\n", name, type, value_count, *ptr);
+        for (uint8_t i = 1; i < value_count; i++) {
+            printf("│ %-27s | %-9s │ %-5s │ %-49"PRId8" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == ASCII) {
-        printf("0x%-.4X | %-6d | %-11d | %s\n", tag, type, value_count, (char *)(de->Value));
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49s │\n", name, type, value_count, (char *)(de->Value));
 
     } else if (type == SHORT) {
         uint16_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu16"\n", tag, type, value_count, *ptr);
-        for (int i = 1; i < value_count; i++) {
-            /* Print 32 spaces before printing the value */
-            printf("%*c%"PRIu16"\n", 32, ' ', *(ptr + i));
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRIu16" │\n", name, type, value_count, *ptr);
+        for (uint8_t i = 1; i < value_count; i++) {
+            printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu16" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == SSHORT) {
         int16_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId16"\n", tag, type, value_count, *ptr);
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRId16" │\n", name, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId16"\n", *(ptr + i));
+            printf("│ %-27s | %-9s │ %-5s │ %-49"PRId16" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == LONG) {
         uint32_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu32"\n", tag, type, value_count, *ptr);
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRIu32" │\n", name, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
-            printf("%32"PRIu32"\n", *(ptr + i));
+            printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu32" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == SLONG) {
         int32_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId32"\n", tag, type, value_count, *ptr);
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49"PRId32" │\n", name, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId32"\n", *(ptr + i));
+            printf("│ %-27s | %-9s │ %-5s │ %-49"PRId32" │\n", "", "", "", *(ptr + i));
         }
 
     } else if (type == RATIONAL) {
         uint32_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRIu32"/%"PRIu32"\n", tag, type, value_count, *ptr, *(ptr + 1));
+        /* Uncomment to print in fraction */
+        // printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %24"PRIu32"/%-24"PRIu32" │\n", name, type, value_count, *ptr, *(ptr + 1));
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49.2f │\n", name, type, value_count, (double)(*ptr)/(*(ptr + 1)));
         for (int i = 1; i < value_count; i++) {
-            /* Print 32 spaces before printing the value */
-            printf("%*c%"PRIu32"/%"PRIu32"\n", 32, ' ', *(ptr + 2*i), *(ptr + 2*i + 1));
+            // printf("│ %-27s | %-9s │ %-5s │ %24"PRIu32"/%-24"PRIu32" │\n", "", "", "", *(ptr + i), *(ptr + 2*i + 1));
+            printf("│ %-27s | %-9s │ %-5s │ %-49.2f │\n", "", "", "", (double)(*(ptr + i))/(*(ptr + 2*i + 1)));
         }
 
     } else if (type == SRATIONAL) {
         int32_t *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %"PRId32"/%"PRId32"\n", tag, type, value_count, *ptr, *(ptr + 1));
+        /* Uncomment to print in fraction */
+        // printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %24"PRId32"/%-24"PRId32" │\n", name, type, value_count, *ptr, *(ptr + 1));
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49.2f │\n", name, type, value_count, (double)(*ptr)/(*(ptr + 1)));
         for (int i = 1; i < value_count; i++) {
-            printf("%32"PRId32"/%"PRId32"\n", *(ptr + 2*i), *(ptr + 2*i + 1));
+            // printf("│ %-27s | %-9s │ %-5s │ %24"PRId32"/%-24"PRId32" │\n", "", "", "", *(ptr + i), *(ptr + 2*i + 1));
+            printf("│ %-27s | %-9s │ %-5s │ %-49.2f │\n", "", "", "", (double)(*(ptr + i))/(*(ptr + 2*i + 1)));
         }
 
     } else if (type == FLOAT) {
         float *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49f │\n", name, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
-            printf("%32f\n", *(ptr + i));
+            printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
         }
         
     } else if (type == DOUBLE) {
         double *ptr = de->Value;
-        printf("0x%-.4X | %-6d | %-11d | %f\n", tag, type, value_count, *ptr);
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49f │\n", name, type, value_count, *ptr);
         for (int i = 1; i < value_count; i++) {
-            printf("%32f\n", *(ptr + i));
+            printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
         }
+    } else if (type == UNDEFINED) {
+        printf("│ %-27s │ %-9"PRIu32" │ %-5"PRIu32" │ %-49s │\n", name, type, value_count, "");
     }
 }
 
@@ -330,18 +347,14 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
     }
 
     if (tag == 0x8769) {
-
         struct Image_File_Directory *exif_ifd = calloc(1, sizeof(struct Image_File_Directory));
         uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
 
         /* Construct Exif IFD and print information */
         exif_construct_ifd(exif_ifd, from, ifh);
         image_file_directory_print_info(exif_ifd);
-
+        
     } else if (tag == 0x8825) {
-
-        /* TODO: Construct GPS IFD and print information */
-
         struct Image_File_Directory *gps_ifd = calloc(1, sizeof(struct Image_File_Directory));
         uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
 
@@ -357,11 +370,18 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh) {
 }
 
 void image_file_directory_print_info(struct Image_File_Directory *ifd) {
-    printf("%-6s | %-6s | %-6s | %-6s\n", "Tag", "Type", "Value Count", "Value / Value Offset");
+    printf("┌─────────────────────────────┬───────────┬───────┬───────────────────────────────────────────────────┐\n");
+    printf("│             Tag             │   Type    │ Count │                       Value                       │\n");
+    printf("├─────────────────────────────┼───────────┼───────┼───────────────────────────────────────────────────┤\n");
     for (int i = 0; i < ifd->DE_Count; i++) {
         directory_entry_print_info(ifd->DE + i);
+
+        if (i == ifd->DE_Count - 1) {
+            printf("└─────────────────────────────┴───────────┴───────┴───────────────────────────────────────────────────┘\n");
+        } else {
+            printf("├─────────────────────────────┼───────────┼───────┼───────────────────────────────────────────────────┤\n");
+        }
     }
-    printf("\n");
 }
 
 uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh) {

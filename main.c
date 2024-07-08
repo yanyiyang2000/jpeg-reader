@@ -28,9 +28,9 @@ int main() {
     uint8_t *ptr          = NULL;   // pointer to the current byte
 
     struct Marker_Segment *segments[16] = {0};  // list of Marker Segment pointers
-    uint8_t               id[2]         = {0};  // the identifier of the current Marker Segment
-    uint16_t              seg_len       = 0;    // the length of the current Marker Segment
-    uint8_t               seg_idx       = 0;    // the index of the Marker Segment pointer in the list
+    uint8_t               id[2]         = {0};  // identifier of the current Marker Segment
+    uint16_t              seg_len       = 0;    // length of the current Marker Segment
+    uint8_t               seg_idx       = 0;    // index of the Marker Segment pointer in the list
 
     img = fopen("./images/test.jpeg", "rb");
     fread(buffer, 10240, 1, img);
