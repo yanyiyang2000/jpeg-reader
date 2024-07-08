@@ -4,8 +4,8 @@
 #define TAG_H
 
 struct Tag {
-    const char     *Name;
-    const uint16_t Tag;
+    const char     *Name;   /* Descriptive name of the tag */
+    const uint16_t Tag;     /* Tag number in hexadecimal */
 };
 
 static struct Tag tags[] = {
@@ -24,13 +24,13 @@ static struct Tag tags[] = {
     /* Extension Tags [TIFF Rev 6.0, pp.117-118] */
     {"TileWidth",                   0x0142},    // The tile width in pixels
     {"TileLength",                  0x0143},    // The tile length (height) in pixels
-    {"JPEGInterchangeFormat",       0x0201},    // The offset to JPEG SOI
+    {"JPEGInterchangeFormat",       0x0201},    // The offset to JPEG SOI in bytes
     {"JPEGInterchangeFormatLength", 0x0202},    // The length of JPEG data in bytes
     {"YCbCrPositioning",            0x0213},    // The positioning of subsampled chrominance components relative to luminance samples
 
     /* Private Tags [Exif v3.0, pp.38-39] */
-    {"Exif_IFD",                    0x8769},    // The offset of the Exif IFD
-    {"GPS_Info_IFD",                0x8825},    // The offset of the GPS Info IFD
+    {"Exif_IFD",                    0x8769},    // The offset of Exif IFD in bytes
+    {"GPS_Info_IFD",                0x8825},    // The offset of GPS Info IFD in bytes
 
     /* Private IFD (Exif IFD) Tags [Exif v3.0, pp.54-57] */
     {"ExposureTime",                0x829A},    // The exposure time in seconds

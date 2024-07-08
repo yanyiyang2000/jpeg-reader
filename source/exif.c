@@ -6,7 +6,7 @@
 #include <inttypes.h> // PRIX
 
 #include "exif.h"
-#include "tags.h"
+#include "tag.h"
 
 /* Flag indicating mismatch between the image and machine endianess. */
 bool need_byte_swap = true;
