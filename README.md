@@ -58,7 +58,7 @@ We only care about the information stored in **APP0** and **APP1**.
 | nth IFD               | variable |                           |
 
 [^3.1]: Specified in Exif Version 3.0, p.31
-[^3.2]: Value of Length is in big-endian
+[^3.2]: Length is always in big-endian
 [^3.3]: ASCII string "Exif" terminated by two null bytes
 
 
@@ -66,13 +66,14 @@ We only care about the information stored in **APP0** and **APP1**.
 | Description             | Length   | Value   |
 | ----------------------- | -------- | ------- |
 | Byte Order[^4.2]        | 2        | [^4.3]  |
-| Magic Number            | 2        | `00 2A` |
-| Offset of 0th IFD[^4.4] | 4        |         |
+| Magic Number            | 2        | [^4.4]  |
+| Offset of 0th IFD[^4.5] | 4        |         |
 
 [^4.1]: Specified in TIFF Revision 6.0, p.13
 [^4.2]: Byte Order dictates the endianess of the following values
-[^4.3]: `49 49` for small endian and `4D 4D` for big endian
-[^4.4]: Offset is from the first byte of IFH
+[^4.3]: `49 49` for little-endian and `4D 4D` for big-endian
+[^4.4]: `2A 00` for little-endian and `00 2A` for big-endian
+[^4.5]: Offset is from the first byte of IFH
 
 
 ## IFD [^5.1]

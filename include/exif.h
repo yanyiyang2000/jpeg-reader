@@ -41,12 +41,12 @@
  * 
  *  - Bytes 4-7:  The number of values, Count of the indicated Type.
  * 
- *  - Bytes 8-11: The Value Offset, the file offset (in bytes) of the Value for the field. The Value is expected to begin
- *                on a word boundary; the corresponding Value Offset will thus be an even number. This file offset may
- *                point anywhere in the file, even after the image data.
+ *  - Bytes 8-11: The Value Offset, the file offset (in bytes) of the Value for the field. The Value is expected to 
+ *                begin on a word boundary; the corresponding Value Offset will thus be an even number. This file offset 
+ *                may point anywhere in the file, even after the image data.
  * 
- * The value of the Count part of an ASCII field entry includes the NULL byte. If padding is necessary, the Count does not
- * include the pad byte.
+ * @note The Count of an ASCII field entry includes the NULL byte. If padding is necessary, the Count does not include 
+ *       the pad byte.
  */
 struct __attribute__((packed)) Directory_Entry {
     uint16_t Tag;               /* The field tag */
@@ -79,15 +79,13 @@ struct Image_File_Directory {
  * 
  * An 8-byte Image File Header (IFH) has the following format:
  * 
- *  - Bytes 0-1: The byte order used within the file.
- *               0x4949 (little-endian)
- *               0x4D4D (big-endian)
+ *  - Bytes 0-1: The byte order used within the file. (0x4949 for little-endian and 0x4D4D for big-endian)
  * 
  *  - Bytes 2-3: An arbitrary but carefully chosen number (42).
  * 
- *  - Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the header
- *               but must begin on a word boundary. In particular, an Image File Directory may follow the image data it
- *               describes.
+ *  - Bytes 4-7: The offset (in bytes) of the first IFD. The directory may be at any location in the file after the 
+ *               header but must begin on a word boundary. In particular, an Image File Directory may follow the image 
+ *               data it describes.
  */
 struct __attribute__((packed)) Image_File_Header {
     uint16_t Byte_Order;    /* The byte order used within the file */
@@ -96,7 +94,7 @@ struct __attribute__((packed)) Image_File_Header {
 };
 
 /**
- * [Exif v2.32, p.19]
+ * [Exif v3.0, p.31]
  * 
  * Exif Marker Segment
  */
@@ -149,9 +147,11 @@ void image_file_directory_print_info(struct Image_File_Directory *ifd);
 /**
  * This function constructs Directory Entries (DEs) in an Image File Directory (IFD) by parsing the given byte array.
  * 
- * @note There are several Exif-specific DEs according to the Exif v2.32. 
- * For example, DE with Tag 0x8769 contains offset to the Exif IFD from the first byte of Image File Header (IFH).
- * DE with Tag 0x8825 contains offset to the GPS information from the first byte of IFH.
+ * There are two Exif-specific DEs:
+ * 
+ * - DE with Tag 0x8769 contains offset to the Exif IFD from the first byte of the Image File Header (IFH).
+ * 
+ * - DE with Tag 0x8825 contains offset to the GPS IFD from the first byte of the IFH.
  * 
  * @param to       The pointer to the DE
  * @param from     The pointer to the byte array to be parsed
