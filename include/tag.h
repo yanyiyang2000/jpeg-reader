@@ -4,8 +4,8 @@
 #define TAG_H
 
 struct Tag {
-    const char     *Name;   /* Descriptive name of the tag */
-    const uint16_t Tag;     /* Tag number in hexadecimal */
+    char     *Name;   /* Descriptive name of the tag */
+    uint16_t Tag;     /* Tag number in hexadecimal */
 };
 
 static struct Tag tags[] = {
