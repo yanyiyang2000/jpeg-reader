@@ -10,10 +10,15 @@ struct Tag {
 
 static struct Tag tags[] = {
     /* Baseline Tags [TIFF Rev 6.0, pp.117-118] */
+    {"ImageWidth",                  0x0100},    // The image width
+    {"ImageHeight",                 0x0101},    // The image height
+    {"BitsPerSample",               0x0102},    // The number of bits per component
     {"Compression",                 0x0103},    // 1 = Uncompressed. 2 = CCITT 1D. 3 = Group 3 fax. 4 = Group 4 fax. 5 = LZW. 6 = JPEG. 32773 = PackBits
+    {"PhotometricInterpretation",   0x0106},    // 0 = WhiteIsZero. 1 = BlackIsZero. 2 = RGB. 3 = Palette color. 4 = Transparency mask. 5 = Seperated. 6 = YCbCr. 
     {"Make",                        0x010F},    // The manufacturer of the scanner, video digitizer, or other type of equipment used to generate the image
     {"Model",                       0x0110},    // The model name or number of the scanner, video digitizer, or other type of equipment used to generate the image
     {"Orientation",                 0x0112},    // The orientation of the image with respect to the rows and columns
+    {"SamplesPerPixel",             0x0115},    // The number of components per pixel
     {"XResolution",                 0x011A},    // The number of pixels per ResolutionUnit in the ImageWidth
     {"YResolution",                 0x011B},    // The number of pixels per ResolutionUnit in the ImageLength
     {"ResolutionUnit",              0x0128},    // 1 = No absolute unit of measurement. 2 = Inch. 3 = Centimeter.

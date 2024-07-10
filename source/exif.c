@@ -9,7 +9,7 @@
 #include "tag.h"
 
 /* Flag indicating mismatch between the image and machine endianess. */
-bool need_byte_swap = true;
+bool need_byte_swap = false;
 
 void directory_entry_byte_swap(struct Directory_Entry *de) {
     de->Tag         = __builtin_bswap16(de->Tag);
@@ -30,6 +30,11 @@ void directory_entry_print_info(struct Directory_Entry *de) {
             tag_name = tags[i].Name;
             break;
         }
+    }
+
+    /* In case of unknown field tag number, print the tag number in hex */
+    if (tag_name == NULL) {
+        printf("│ 0x%-25"PRIX16" │ %-9s │ %-5s │ %-49s │\n", tag, "", "", "");
     }
 
     /* Print the field tag name, field type, field value count and field values */
