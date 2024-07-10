@@ -4,6 +4,32 @@
 
 #include "jfif.h"
 
+void jfif_byte_swap(struct JFIF_Segment *segment) {
+    segment->Version  = __builtin_bswap16(segment->Version);
+    segment->XDensity = __builtin_bswap16(segment->XDensity);
+    segment->YDensity = __builtin_bswap16(segment->YDensity);
+}
+
+void jfif_print_info(struct JFIF_Segment *segment) {
+    printf("┌──────────────────────────────────────────┐\n");
+    printf("│                   APP0                   │\n");
+    printf("├──────────────────────────────────┬───────┤\n");
+    printf("│ JFIF major version               │ %-5d │\n", segment->Version >> 8);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ JFIF minor version               │ %-5d │\n", segment->Version & 0xff);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Unit                             │ %-5d │\n", segment->Unit);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Horizontal pixel density         │ %-5d │\n", segment->XDensity);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Vertical pixel density           │ %-5d │\n", segment->YDensity);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Thumbnail horizontal pixel count │ %-5d │\n", segment->XThumbnail);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Thumbnail vertical pixel count   │ %-5d │\n", segment->YThumbnail);
+    printf("└──────────────────────────────────┴───────┘\n\n");
+}
+
 uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t seg_len) {
     uint8_t  *ptr = from; // pointer to the current byte
     uint16_t n    = 0;    // RGBn field length
@@ -33,30 +59,4 @@ uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t
     jfif_print_info(to);
 
     return ptr;
-}
-
-void jfif_byte_swap(struct JFIF_Segment *segment) {
-    segment->Version  = __builtin_bswap16(segment->Version);
-    segment->XDensity = __builtin_bswap16(segment->XDensity);
-    segment->YDensity = __builtin_bswap16(segment->YDensity);
-}
-
-void jfif_print_info(struct JFIF_Segment *segment) {
-    printf("┌──────────────────────────────────────────┐\n");
-    printf("│                   APP0                   │\n");
-    printf("├──────────────────────────────────┬───────┤\n");
-    printf("│ JFIF major version               │ %-5d │\n", segment->Version >> 8);
-    printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ JFIF minor version               │ %-5d │\n", segment->Version & 0xff);
-    printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Unit                             │ %-5d │\n", segment->Unit);
-    printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Horizontal pixel density         │ %-5d │\n", segment->XDensity);
-    printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Vertical pixel density           │ %-5d │\n", segment->YDensity);
-    printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Thumbnail horizontal pixel count │ %-5d │\n", segment->XThumbnail);
-    printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Thumbnail vertical pixel count   │ %-5d │\n", segment->YThumbnail);
-    printf("└──────────────────────────────────┴───────┘\n\n");
 }
