@@ -51,10 +51,10 @@
 struct __attribute__((packed)) Directory_Entry {
     uint16_t Tag;               /* The field tag */
     uint16_t Type;              /* The field type */
-    uint32_t Value_Count;       /* The number of values */
+    uint32_t Value_Count;       /* The number of field values */
     union {
-        uint32_t Value_Offset;  /* The offset of the values */
-        void     *Value;        /* The pointer to the values */
+        uint32_t Value_Offset;  /* The offset of the field values */
+        void     *Value;        /* The pointer to the field values */
     };
 };
 
@@ -169,7 +169,7 @@ uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t d
  * @param from The pointer to the byte array to be parsed
  * @param ifh  The pointer to the Image File Header (IFH)
  * 
- * @return A pointer to the first byte after the IFD
+ * @return A pointer to the next IFD
  */
 uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint8_t *ifh);
 
@@ -180,7 +180,7 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
  * @param from    The pointer to the byte array to be parsed
  * @param seg_len The length of the Exif Segment
  * 
- * @return A pointer to the first byte after the Exif Segment
+ * @return A pointer to the next Marker Segment
  */
 uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t seg_len);
 

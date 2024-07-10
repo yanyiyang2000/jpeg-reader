@@ -26,7 +26,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     /* Obtain the field tag name */
     for (uint8_t i = 0; i < (sizeof(tags)/sizeof(struct Tag)); i++) {
-        if (tags[i].Tag == tag) {
+        if (tags[i].Number == tag) {
             tag_name = tags[i].Name;
             break;
         }
@@ -34,6 +34,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     /* Print the field tag name, field type, field value count and field values */
     if (type == BYTE) {
+
         uint8_t *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu8" │\n", tag_name, "BYTE", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
@@ -41,6 +42,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == SBYTE) {
+
         int8_t *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId8" │\n", tag_name, "SBYTE", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
@@ -48,9 +50,11 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == ASCII) {
+
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "ASCII", value_count, (char *)(de->Value));
 
     } else if (type == SHORT) {
+
         uint16_t *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu16" │\n", tag_name, "SHORT", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
@@ -58,6 +62,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == SSHORT) {
+
         int16_t *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId16" │\n", tag_name, "SSHORT", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
@@ -65,6 +70,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == LONG) {
+
         uint32_t *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu32" │\n", tag_name, "LONG", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
@@ -72,6 +78,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == SLONG) {
+
         int32_t *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId32" │\n", tag_name, "SLONG", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
@@ -79,6 +86,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == RATIONAL) {
+
         uint32_t *ptr = de->Value;
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %24"PRIu32"/%-24"PRIu32" │\n", tag_name, "RATIONAL", value_count, *ptr, *(ptr + 1));
@@ -89,6 +97,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == SRATIONAL) {
+
         int32_t *ptr = de->Value;
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %24"PRId32"/%-24"PRId32" │\n", tag_name, "SRATIONAL", value_count, *ptr, *(ptr + 1));
@@ -99,6 +108,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
 
     } else if (type == FLOAT) {
+
         float *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "FLOAT", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
@@ -106,11 +116,13 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         }
         
     } else if (type == DOUBLE) {
+
         double *ptr = de->Value;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "DOUBLE", value_count, *ptr);
         for (uint8_t i = 1; i < value_count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
         }
+
     } else if (type == UNDEFINED) {
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "UNDEFINED", value_count, "");
     }
@@ -470,7 +482,7 @@ uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t
     ptr = exif_construct_ifd(ifd, ptr, ifh); // pointing at the next IFD if exists
     image_file_directory_print_info(ifd);
     
-    /* Construct the rest IFDs if exist and print the information */
+    /* Construct the remaining IFDs if exist and print the information */
     curr_ifd = ifd; 
     while (curr_ifd->IFD_Offset != 0) { // The IFD Offset field of the last IFD is 0
         next_ifd = curr_ifd->Next_IFD;
