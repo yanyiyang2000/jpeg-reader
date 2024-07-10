@@ -6,7 +6,7 @@
 
 uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t seg_len) {
     uint8_t  *ptr = from; // pointer to the current byte
-    uint16_t n    = 0;    // RGBn field
+    uint16_t n    = 0;    // RGBn field length
 
     /* Obtain the JFIF Segment excluding RGBn and AMPF fields */
     memcpy(to->Identifier, ptr, 14);
@@ -42,10 +42,21 @@ void jfif_byte_swap(struct JFIF_Segment *segment) {
 }
 
 void jfif_print_info(struct JFIF_Segment *segment) {
-    printf("JFIF v%d.%d\n", segment->Version >> 8, segment->Version & 0xff);
-    printf("Unit:                             %d\n", segment->Unit);
-    printf("Horizontal pixel density:         %d\n", segment->XDensity);
-    printf("Vertical pixel density:           %d\n", segment->YDensity);
-    printf("Thumbnail horizontal pixel count: %d\n", segment->XThumbnail);
-    printf("Thumbnail vertical pixel count:   %d\n\n", segment->YThumbnail);
+    printf("┌──────────────────────────────────────────┐\n");
+    printf("│                   APP0                   │\n");
+    printf("├──────────────────────────────────┬───────┤\n");
+    printf("│ JFIF major version               │ %-5d │\n", segment->Version >> 8);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ JFIF minor version               │ %-5d │\n", segment->Version & 0xff);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Unit                             │ %-5d │\n", segment->Unit);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Horizontal pixel density         │ %-5d │\n", segment->XDensity);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Vertical pixel density           │ %-5d │\n", segment->YDensity);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Thumbnail horizontal pixel count │ %-5d │\n", segment->XThumbnail);
+    printf("├──────────────────────────────────┼───────┤\n");
+    printf("│ Thumbnail vertical pixel count   │ %-5d │\n", segment->YThumbnail);
+    printf("└──────────────────────────────────┴───────┘\n\n");
 }
