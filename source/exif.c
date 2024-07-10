@@ -186,7 +186,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *( (uint16_t *)(de->Value) + i ) = __builtin_bswap16(*( (uint16_t *)(de->Value) + i ));
+                *((uint16_t *)(de->Value + i)) = __builtin_bswap16( *((uint16_t *)(de->Value + i)) );
             }
         }
 
@@ -210,7 +210,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *( (int16_t *)(de->Value) + i ) = __builtin_bswap16(*( (int16_t *)(de->Value) + i ));
+                *((int16_t *)(de->Value + i)) = __builtin_bswap16( *((int16_t *)(de->Value + i)) );
             }
         }
 
@@ -222,7 +222,6 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             de->Value = calloc(value_count, 4);
             memcpy(de->Value, &value, 4*value_count);
         } else {                    // Offset presents
-            // offset = de->Value_Offset;
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
             } else {
@@ -235,7 +234,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *( (uint32_t *)(de->Value) + i ) = __builtin_bswap32(*( (uint32_t *)(de->Value) + i ));
+                *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
             }
         }
 
@@ -259,7 +258,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *( (uint32_t *)(de->Value) + i ) = __builtin_bswap32(*( (uint32_t *)(de->Value) + i ));
+                *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
             }
         }
 
@@ -283,7 +282,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *( (float *)(de->Value) + i ) = __builtin_bswap32(*( (float *)(de->Value) + i ));
+                *((float *)(de->Value + i)) = __builtin_bswap32( *((float *)(de->Value + i)) );
             }
         }
 
@@ -301,7 +300,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < 2*value_count; i++) {
-                *( (uint32_t *)(de->Value) + i ) = __builtin_bswap32(*( (uint32_t *)(de->Value) + i ));
+                *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
             }
         }
 
@@ -319,7 +318,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < 2*value_count; i++) {
-                *( (int32_t *)(de->Value) + i ) = __builtin_bswap32(*( (int32_t *)(de->Value) + i ));
+                *((int32_t *)(de->Value + i)) = __builtin_bswap32( *((int32_t *)(de->Value + i)) );
             }
         }
 
@@ -337,9 +336,10 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
 
         if (need_byte_swap) {
             for (int i = 0; i < value_count; i++) {
-                *( (double *)(de->Value) + i ) = __builtin_bswap64(*( (double *)(de->Value) + i ));
+                *((double *)(de->Value + i)) = __builtin_bswap64( *((double *)(de->Value + i)) );
             }
         }
+
     } else if (type == UNDEFINED) {
         /**
          * TODO:
