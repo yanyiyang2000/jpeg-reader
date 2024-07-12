@@ -19,15 +19,11 @@ void directory_entry_byte_swap(struct Directory_Entry *de) {
 }
 
 void directory_entry_print_info(struct Directory_Entry *de) {
-    uint16_t tag         = de->Tag;
-    uint32_t type        = de->Type;
-    uint32_t value_count = de->Value_Count;
-
-    char *tag_name  = NULL; // field tag name
+    char *tag_name = NULL; // field tag name
 
     /* Obtain the field tag name */
     for (uint8_t i = 0; i < (sizeof(tags)/sizeof(struct Tag)); i++) {
-        if (tags[i].Number == tag) {
+        if (tags[i].Number == de->Tag) {
             tag_name = tags[i].Name;
             break;
         }
@@ -35,102 +31,102 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     /* In case of unknown field tag number, print the tag number in hex */
     if (tag_name == NULL) {
-        printf("│ 0x%-25"PRIX16" │ %-9s │ %-5s │ %-49s │\n", tag, "", "", "");
+        printf("│ 0x%-25"PRIX16" │ %-9s │ %-5s │ %-49s │\n", de->Tag, "", "", "");
     }
 
     /* Print the field tag name, field type, field value count and field values */
-    if (type == BYTE) {
+    if (de->Type == BYTE) {
 
         uint8_t *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu8" │\n", tag_name, "BYTE", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu8" │\n", tag_name, "BYTE", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu8" │\n", "", "", "", *(ptr + i));
         }
 
-    } else if (type == SBYTE) {
+    } else if (de->Type == SBYTE) {
 
         int8_t *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId8" │\n", tag_name, "SBYTE", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId8" │\n", tag_name, "SBYTE", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId8" │\n", "", "", "", *(ptr + i));
         }
 
-    } else if (type == ASCII) {
+    } else if (de->Type == ASCII) {
 
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "ASCII", value_count, (char *)(de->Value));
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "ASCII", de->Value_Count, (char *)(de->Value));
 
-    } else if (type == SHORT) {
+    } else if (de->Type == SHORT) {
 
         uint16_t *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu16" │\n", tag_name, "SHORT", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu16" │\n", tag_name, "SHORT", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu16" │\n", "", "", "", *(ptr + i));
         }
 
-    } else if (type == SSHORT) {
+    } else if (de->Type == SSHORT) {
 
         int16_t *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId16" │\n", tag_name, "SSHORT", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId16" │\n", tag_name, "SSHORT", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId16" │\n", "", "", "", *(ptr + i));
         }
 
-    } else if (type == LONG) {
+    } else if (de->Type == LONG) {
 
         uint32_t *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu32" │\n", tag_name, "LONG", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu32" │\n", tag_name, "LONG", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu32" │\n", "", "", "", *(ptr + i));
         }
 
-    } else if (type == SLONG) {
+    } else if (de->Type == SLONG) {
 
         int32_t *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId32" │\n", tag_name, "SLONG", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId32" │\n", tag_name, "SLONG", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId32" │\n", "", "", "", *(ptr + i));
         }
 
-    } else if (type == RATIONAL) {
+    } else if (de->Type == RATIONAL) {
 
         uint32_t *ptr = de->Value;
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %24"PRIu32"/%-24"PRIu32" │\n", tag_name, "RATIONAL", value_count, *ptr, *(ptr + 1));
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49.2f │\n", tag_name, "RATIONAL", value_count, (double)(*ptr)/(*(ptr + 1)));
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49.2f │\n", tag_name, "RATIONAL", de->Value_Count, (double)(*ptr)/(*(ptr + 1)));
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             // printf("│ %-27s | %-9s │ %-5s │ %24"PRIu32"/%-24"PRIu32" │\n", "", "", "", *(ptr + i), *(ptr + 2*i + 1));
             printf("│ %-27s | %-9s │ %-5s │ %-49.2f │\n", "", "", "", (double)(*(ptr + i))/(*(ptr + 2*i + 1)));
         }
 
-    } else if (type == SRATIONAL) {
+    } else if (de->Type == SRATIONAL) {
 
         int32_t *ptr = de->Value;
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %24"PRId32"/%-24"PRId32" │\n", tag_name, "SRATIONAL", value_count, *ptr, *(ptr + 1));
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49.2f │\n", tag_name, "SRATIONAL", value_count, (double)(*ptr)/(*(ptr + 1)));
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49.2f │\n", tag_name, "SRATIONAL", de->Value_Count, (double)(*ptr)/(*(ptr + 1)));
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             // printf("│ %-27s | %-9s │ %-5s │ %24"PRId32"/%-24"PRId32" │\n", "", "", "", *(ptr + i), *(ptr + 2*i + 1));
             printf("│ %-27s | %-9s │ %-5s │ %-49.2f │\n", "", "", "", (double)(*(ptr + i))/(*(ptr + 2*i + 1)));
         }
 
-    } else if (type == FLOAT) {
+    } else if (de->Type == FLOAT) {
 
         float *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "FLOAT", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "FLOAT", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
         }
         
-    } else if (type == DOUBLE) {
+    } else if (de->Type == DOUBLE) {
 
         double *ptr = de->Value;
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "DOUBLE", value_count, *ptr);
-        for (uint8_t i = 1; i < value_count; i++) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "DOUBLE", de->Value_Count, *ptr);
+        for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
         }
 
-    } else if (type == UNDEFINED) {
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "UNDEFINED", value_count, "");
+    } else if (de->Type == UNDEFINED) {
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "UNDEFINED", de->Value_Count, "");
     }
 }
 

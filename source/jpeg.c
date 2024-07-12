@@ -32,7 +32,6 @@ void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_
 
         case 0xE1:
             exif_segment = calloc(1, sizeof(struct Exif_Segment));
-            // *ptr = exif_construct_segment(exif_segment, *ptr, seg_len-2);
             exif_construct_segment(exif_segment, ptr, seg_len-2);
             seg->exif_segment = exif_segment;
             break;
