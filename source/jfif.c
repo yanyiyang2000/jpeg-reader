@@ -4,6 +4,7 @@
 
 #include "jfif.h"
 
+
 void jfif_byte_swap(struct JFIF_Segment *segment) {
     segment->Version  = __builtin_bswap16(segment->Version);
     segment->XDensity = __builtin_bswap16(segment->XDensity);
