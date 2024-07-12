@@ -18,7 +18,7 @@ Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**A
 | Image Data | -             | variable |
 | EOI        | `FF D9`       | variable |
 
-[^1.1]: Specified in ISO 10918-1:1994, p.33
+[^1.1]: Specified in **ISO 10918-1:1994**, p.33
 [^1.2]: Unless otherwise stated, all monospace texts are in hexadecimal
 [^1.3]: Unless otherwise stated, all lengths are in bytes
 
@@ -38,7 +38,7 @@ We only care about the information stored in **APP0** and **APP1**.
 | Xthumbnail  | 2        |                        |
 | Ythumbnail  | 2        |                        |
 
-[^2.1]: Specified in JFIF Version 1.02, p.5
+[^2.1]: Specified in **JFIF Version 1.02**, p.5
 [^2.2]: All values of **APP0** are in big-endian
 [^2.3]: ASCII string "JFIF" terminated by a null byte
 
@@ -57,7 +57,7 @@ We only care about the information stored in **APP0** and **APP1**.
 | ...                   | ...      |                           |
 | nth IFD               | variable |                           |
 
-[^3.1]: Specified in Exif Version 3.0, p.31
+[^3.1]: Specified in **Exif Version 3.0**, p.31
 [^3.2]: Length is always in big-endian
 [^3.3]: ASCII string "Exif" terminated by two null bytes
 
@@ -69,7 +69,7 @@ We only care about the information stored in **APP0** and **APP1**.
 | Magic Number            | 2        | [^4.4]  |
 | Offset of 0th IFD[^4.5] | 4        |         |
 
-[^4.1]: Specified in TIFF Revision 6.0, p.13
+[^4.1]: Specified in **TIFF Revision 6.0**, p.13
 [^4.2]: Byte Order dictates the endianess of the following values
 [^4.3]: `49 49` for little-endian and `4D 4D` for big-endian
 [^4.4]: `2A 00` for little-endian and `00 2A` for big-endian
@@ -88,7 +88,7 @@ Each **IFD** is composed of multiple *Directory Entries* (**DE**s).
 | Offset of Next IFD[^5.2] | 4        | [^5.3]  |
 | IFD Value                | variable |         |
 
-[^5.1]: Specified in TIFF Revision 6.0, pp.14-16
+[^5.1]: Specified in **TIFF Revision 6.0**, pp.14-16
 [^5.2]: Offset is from the first byte of IFH
 [^5.3]: `00 00 00 00` for the last IFD
 
@@ -103,7 +103,7 @@ Each **DE** is 12-byte.
 | Value Count        | 4        |        |
 | Value/Offset[^6.2] | 4        |        |
 
-[^6.1]: Specified in TIFF Revision 6.0, pp.14-15
+[^6.1]: Specified in **TIFF Revision 6.0**, pp.14-15
 [^6.2]: If 4 bytes are not enough to hold all the values, this value indicates the offset of the actual values from the first byte of IFH
 
 # Workflow Overview
