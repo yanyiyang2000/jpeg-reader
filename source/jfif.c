@@ -31,33 +31,30 @@ void jfif_print_info(struct JFIF_Segment *segment) {
     printf("└──────────────────────────────────┴───────┘\n\n");
 }
 
-uint8_t* jfif_construct_segment(struct JFIF_Segment *to, uint8_t *from, uint16_t seg_len) {
-    uint8_t  *ptr = from; // pointer to the current byte
-    uint16_t n    = 0;    // RGBn field length
+void jfif_construct_segment(struct JFIF_Segment *seg, uint8_t **ptr, uint16_t seg_len) {
+    uint16_t n = 0;    // RGBn field length
 
     /* Obtain the JFIF Segment excluding RGBn and AMPF fields */
-    memcpy(to->Identifier, ptr, 14);
+    memcpy(seg->Identifier, *ptr, 14);
     
     /* Swap bytes of the fields of the JFIF Segment which is in big-endian */
-    jfif_byte_swap(to);
+    jfif_byte_swap(seg);
 
     /* Skip the fields, now pointing at the RGBn field */
-    ptr += 14;
+    *ptr += 14;
 
     /* Obtain the RGBn field if exists */
-    n = to->XThumbnail * to->YThumbnail;   // [JFIF v1.02, p.5]
-    if (n > 0) {                           // it is possible the length of this field is 0
-        to->RGBn = calloc(1, 3*n);
-        ptr += n;                          // skip the RGBn field
+    n = seg->XThumbnail * seg->YThumbnail;  // [JFIF v1.02, p.5]
+    if (n > 0) {                            // it is possible the length of this field is 0
+        seg->RGBn = calloc(1, 3*n);
+        *ptr += n;                          // skip the RGBn field
     }
 
     /* Obtain the AMPF field if exists */
-    if (ptr < from + seg_len) {
-        memcpy(to->AMPF, ptr, 4);
-        ptr += 4; // skip the AMPF field
+    if (*ptr < *ptr + seg_len) {
+        memcpy(seg->AMPF, *ptr, 4);
+        *ptr += 4; // skip the AMPF field
     }
 
-    jfif_print_info(to);
-
-    return ptr;
+    jfif_print_info(seg);
 }

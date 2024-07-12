@@ -26,7 +26,7 @@ void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_
     switch (seg->Marker[1]) {
         case 0xE0:
             jfif_segment = calloc(1, sizeof(struct JFIF_Segment));
-            *ptr = jfif_construct_segment(jfif_segment, *ptr, seg_len-2);
+            jfif_construct_segment(jfif_segment, ptr, seg_len-2);
             seg->jfif_segment = jfif_segment;
             break;
 
