@@ -28,7 +28,7 @@ struct __attribute__((packed)) Marker_Segment {
  * This function constructs a Marker Segment by parsing the given byte array.
  * 
  * @param seg     The pointer to the first byte of the Marker Segment
- * @param ptr     The pointer to the byte array to be parsed
+ * @param ptr     The pointer to the pointer to the byte array to be parsed
  * @param seg_len The length of the Marker Segment
  * 
  * @note The parameter ptr will be advanced by the length of the Marker Segment.

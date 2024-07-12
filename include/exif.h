@@ -190,12 +190,10 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
 /**
  * This function constructs an Exif Segment by parsing the given byte array.
  * 
- * @param to      The pointer to the Exif Segment
- * @param from    The pointer to the byte array to be parsed
+ * @param seg     The pointer to the Exif Segment
+ * @param ptr     The pointer to the pointer to the byte array to be parsed
  * @param seg_len The length of the Exif Segment
- * 
- * @return A pointer to the next Marker Segment
  */
-uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t seg_len);
+void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t seg_len);
 
 #endif /* EXIF_H */

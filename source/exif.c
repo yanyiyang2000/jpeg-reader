@@ -458,34 +458,32 @@ uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint
     return ptr;
 }
 
-uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t seg_len) {
-    uint8_t *ptr = from; // pointer to the current byte
-    uint8_t *ifh = NULL; // pointer to the first byte of the IFH
-
+void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t seg_len) {
+    uint8_t                     *ifh      = NULL; // pointer to the first byte of the IFH
     struct Image_File_Directory *ifd      = NULL; // pointer to the first IFD
     struct Image_File_Directory *curr_ifd = NULL; // pointer to the current IFD
     struct Image_File_Directory *next_ifd = NULL; // pointer to the next IFD
 
     /* Obtain the Identifier field of the Exif Segment */
-    memcpy(to->Identifier, ptr, 6);
+    memcpy(seg->Identifier, *ptr, 6);
 
     /* Skip the Identifier field, now pointing at the Byte Order field */
-    ptr += 6;
+    *ptr += 6;
 
     /* Obtain the Image File Header */
-    ifh = ptr;
-    memcpy(&(to->IFH), ptr, 8);
-    if (to->IFH.Byte_Order == BYTE_ORDER_BIG_ENDIAN) {
+    ifh = *ptr;
+    memcpy(&(seg->IFH), *ptr, 8);
+    if (seg->IFH.Byte_Order == BYTE_ORDER_BIG_ENDIAN) {
         need_byte_swap = true;
-        image_file_header_byte_swap(&(to->IFH));
+        image_file_header_byte_swap(&(seg->IFH));
     }
 
     /* Skip the IFH and IFD offset if exists, now pointing at the 1st IFD */
-    ptr += to->IFH.IFD_Offset;
+    *ptr += seg->IFH.IFD_Offset;
 
     /* Construct the 1st IFD and print the information */
     ifd = calloc(1, sizeof(struct Image_File_Directory));
-    ptr = exif_construct_ifd(ifd, ptr, ifh); // pointing at the next IFD if exists
+    *ptr = exif_construct_ifd(ifd, *ptr, ifh); // pointing at the next IFD if exists
     image_file_directory_print_info(ifd);
     
     /* Construct the remaining IFDs if exist and print the information */
@@ -493,13 +491,11 @@ uint8_t* exif_construct_segment(struct Exif_Segment *to, uint8_t *from, uint16_t
     while (curr_ifd->IFD_Offset != 0) { // The IFD Offset field of the last IFD is 0
         next_ifd = curr_ifd->Next_IFD;
         next_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        ptr = exif_construct_ifd(next_ifd, ptr, ifh);
+        *ptr = exif_construct_ifd(next_ifd, *ptr, ifh);
         image_file_directory_print_info(next_ifd);
         curr_ifd = next_ifd;
     }
 
     /* Point to the next Marker Segment */
-    ptr = from + seg_len;
-
-    return ptr;
+    *ptr = *ptr + seg_len;
 }
