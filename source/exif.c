@@ -131,12 +131,8 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 }
 
 void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
-    uint16_t tag         = de->Tag;
-    uint16_t type        = de->Type;
-    uint32_t value_count = de->Value_Count;
-
-    uint32_t offset      = 0; // value offset
-    uint32_t value       = 0; // actual value
+    uint32_t offset = 0; // value offset
+    uint32_t value  = 0; // actual value
 
     /**
      * Obtain the Value or Offset of the Value by evaluating the Value Offset field.
@@ -144,13 +140,13 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
      * If sizeof(Type) * Value_Count <= 4, replace the Value_Offset field with the actual data, 
      * otherwise allocate memory for data type indicated by the Type field and copy the Value using Value_Offset.
      */
-    if ( (type == BYTE) | (type == ASCII) | (type == UNDEFINED) ) {
+    if ( (de->Type == BYTE) | (de->Type == ASCII) | (de->Type == UNDEFINED) ) {
 
-        if (value_count <= 4) {     // Value presents
+        if (de->Value_Count <= 4) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 1);
-            memcpy(de->Value, &value, value_count);
+            de->Value = calloc(de->Value_Count, 1);
+            memcpy(de->Value, &value, de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -158,17 +154,17 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 1);
-            memcpy(de->Value, ifh + offset, value_count);
+            de->Value = calloc(de->Value_Count, 1);
+            memcpy(de->Value, ifh + offset, de->Value_Count);
         }
 
-    } else if (type == SBYTE) {
+    } else if (de->Type == SBYTE) {
 
-        if (value_count <= 4) {     // Value presents
+        if (de->Value_Count <= 4) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 1);
-            memcpy(de->Value, &value, value_count);
+            de->Value = calloc(de->Value_Count, 1);
+            memcpy(de->Value, &value, de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -176,17 +172,17 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 1);
-            memcpy(de->Value, ifh + offset, value_count);
+            de->Value = calloc(de->Value_Count, 1);
+            memcpy(de->Value, ifh + offset, de->Value_Count);
         }
 
-    } else if (type == SHORT) {
+    } else if (de->Type == SHORT) {
 
-        if (value_count <= 2) {     // Value presents
+        if (de->Value_Count <= 2) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 2);
-            memcpy(de->Value, &value, 2*value_count);
+            de->Value = calloc(de->Value_Count, 2);
+            memcpy(de->Value, &value, 2*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -194,23 +190,23 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 2);
-            memcpy(de->Value, ifh + offset, 2*value_count);
+            de->Value = calloc(de->Value_Count, 2);
+            memcpy(de->Value, ifh + offset, 2*de->Value_Count);
         }
 
         if (need_byte_swap) {
-            for (int i = 0; i < value_count; i++) {
+            for (int i = 0; i < de->Value_Count; i++) {
                 *((uint16_t *)(de->Value + i)) = __builtin_bswap16( *((uint16_t *)(de->Value + i)) );
             }
         }
 
-    } else if (type == SSHORT) {
+    } else if (de->Type == SSHORT) {
 
-        if (value_count <= 2) {     // Value presents
+        if (de->Value_Count <= 2) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 2);
-            memcpy(de->Value, &value, 2*value_count);
+            de->Value = calloc(de->Value_Count, 2);
+            memcpy(de->Value, &value, 2*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -218,23 +214,23 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 2);
-            memcpy(de->Value, ifh + offset, 2*value_count);
+            de->Value = calloc(de->Value_Count, 2);
+            memcpy(de->Value, ifh + offset, 2*de->Value_Count);
         }
 
         if (need_byte_swap) {
-            for (int i = 0; i < value_count; i++) {
+            for (int i = 0; i < de->Value_Count; i++) {
                 *((int16_t *)(de->Value + i)) = __builtin_bswap16( *((int16_t *)(de->Value + i)) );
             }
         }
 
-    } else if (type == LONG) {
+    } else if (de->Type == LONG) {
 
-        if (value_count <= 1) {     // Value presents
+        if (de->Value_Count <= 1) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 4);
-            memcpy(de->Value, &value, 4*value_count);
+            de->Value = calloc(de->Value_Count, 4);
+            memcpy(de->Value, &value, 4*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -242,23 +238,23 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 4);
-            memcpy(de->Value, ifh + offset, 4*value_count);
+            de->Value = calloc(de->Value_Count, 4);
+            memcpy(de->Value, ifh + offset, 4*de->Value_Count);
         }
 
         if (need_byte_swap) {
-            for (int i = 0; i < value_count; i++) {
+            for (int i = 0; i < de->Value_Count; i++) {
                 *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
             }
         }
 
-    } else if (type == SLONG) {
+    } else if (de->Type == SLONG) {
 
-        if (value_count <= 1) {     // Value presents
+        if (de->Value_Count <= 1) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 4);
-            memcpy(de->Value, &value, 4*value_count);
+            de->Value = calloc(de->Value_Count, 4);
+            memcpy(de->Value, &value, 4*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -266,23 +262,23 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 4);
-            memcpy(de->Value, ifh + offset, 4*value_count);
+            de->Value = calloc(de->Value_Count, 4);
+            memcpy(de->Value, ifh + offset, 4*de->Value_Count);
         }
 
         if (need_byte_swap) {
-            for (int i = 0; i < value_count; i++) {
+            for (int i = 0; i < de->Value_Count; i++) {
                 *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
             }
         }
 
-    } else if (type == FLOAT) {
+    } else if (de->Type == FLOAT) {
 
-        if (value_count <= 1) {     // Value presents
+        if (de->Value_Count <= 1) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 4);
-            memcpy(de->Value, &value, 4*value_count);
+            de->Value = calloc(de->Value_Count, 4);
+            memcpy(de->Value, &value, 4*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -290,17 +286,17 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(value_count, 4);
-            memcpy(de->Value, ifh + offset, 4*value_count);
+            de->Value = calloc(de->Value_Count, 4);
+            memcpy(de->Value, ifh + offset, 4*de->Value_Count);
         }
 
         if (need_byte_swap) {
-            for (int i = 0; i < value_count; i++) {
+            for (int i = 0; i < de->Value_Count; i++) {
                 *((float *)(de->Value + i)) = __builtin_bswap32( *((float *)(de->Value + i)) );
             }
         }
 
-    } else if (type == RATIONAL) {
+    } else if (de->Type == RATIONAL) {
 
         /* Since a RATIONAL takes at least 8 bytes, we can only retrieve using the Offset. */
         if (need_byte_swap) {
@@ -309,16 +305,16 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             offset = de->Value_Offset;
         }
         de->Value_Offset = 0;
-        de->Value = calloc(2*value_count, 4); // a RATIONAL consists of two LONGs
-        memcpy(de->Value, ifh + offset, 8*value_count);
+        de->Value = calloc(2*de->Value_Count, 4); // a RATIONAL consists of two LONGs
+        memcpy(de->Value, ifh + offset, 8*de->Value_Count);
 
         if (need_byte_swap) {
-            for (int i = 0; i < 2*value_count; i++) {
+            for (int i = 0; i < 2*de->Value_Count; i++) {
                 *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
             }
         }
 
-    } else if (type == SRATIONAL) {
+    } else if (de->Type == SRATIONAL) {
 
         /* Since SRATIONAL takes at least 8 bytes, we can only retrieve using the Offset. */
         if (need_byte_swap) {
@@ -327,16 +323,16 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             offset = de->Value_Offset;
         }
         de->Value_Offset = 0;
-        de->Value = calloc(2*value_count, 4); // a SRATIONAL consists of two SLONGs
-        memcpy(de->Value, ifh + offset, 8*value_count);
+        de->Value = calloc(2*de->Value_Count, 4); // a SRATIONAL consists of two SLONGs
+        memcpy(de->Value, ifh + offset, 8*de->Value_Count);
 
         if (need_byte_swap) {
-            for (int i = 0; i < 2*value_count; i++) {
+            for (int i = 0; i < 2*de->Value_Count; i++) {
                 *((int32_t *)(de->Value + i)) = __builtin_bswap32( *((int32_t *)(de->Value + i)) );
             }
         }
 
-    } else if (type == DOUBLE) {
+    } else if (de->Type == DOUBLE) {
         
         /* Since DOUBLE takes at least 8 bytes, we can only retrieve using the Offset. */
         if (need_byte_swap) {
@@ -345,23 +341,22 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
             offset = de->Value_Offset;
         }
         de->Value_Offset = 0;
-        de->Value = calloc(value_count, 8);
-        memcpy(de->Value, ifh + offset, value_count);
+        de->Value = calloc(de->Value_Count, 8);
+        memcpy(de->Value, ifh + offset, de->Value_Count);
 
         if (need_byte_swap) {
-            for (int i = 0; i < value_count; i++) {
+            for (int i = 0; i < de->Value_Count; i++) {
                 *((double *)(de->Value + i)) = __builtin_bswap64( *((double *)(de->Value + i)) );
             }
         }
 
-    } else if (type == UNDEFINED) {
+    } else if (de->Type == UNDEFINED) {
         /**
-         * TODO:
-         * So far only Tags MakerNote, FlashpixVersion and SceneType are of type UNDEFINED so this is not urgent.
+         * TODO: So far only Tags MakerNote, FlashpixVersion and SceneType are of type UNDEFINED so this is not urgent.
          */
     }
 
-    if (tag == 0x8769) {
+    if (de->Tag == 0x8769) {
         struct Image_File_Directory *exif_ifd = calloc(1, sizeof(struct Image_File_Directory));
         uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
 
@@ -369,7 +364,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         exif_construct_ifd(exif_ifd, &from, ifh);
         image_file_directory_print_info(exif_ifd);
         
-    } else if (tag == 0x8825) {
+    } else if (de->Tag == 0x8825) {
         struct Image_File_Directory *gps_ifd = calloc(1, sizeof(struct Image_File_Directory));
         uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
 
