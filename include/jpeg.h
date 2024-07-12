@@ -16,9 +16,9 @@
  * including the length parameter and excluding the two-byte marker.
  */
 struct __attribute__((packed)) Marker_Segment {
-    uint8_t  Marker[2]; /* marker of this segment */
-    uint16_t Length;    /* length of this segment (always in big-endian) */
-    union {             /* pointer to segment (JFIF or Exif) */
+    uint8_t  Marker[2]; /* The marker of the segment */
+    uint16_t Length;    /* The length of the segment (always in big-endian) */
+    union {             /* The pointer to the segment (JFIF or Exif) */
         struct JFIF_Segment *jfif_segment;
         struct Exif_Segment *exif_segment;
     };

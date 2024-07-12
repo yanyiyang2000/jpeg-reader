@@ -121,6 +121,13 @@ void directory_entry_byte_swap(struct Directory_Entry *de);
 void directory_entry_print_info(struct Directory_Entry *de);
 
 /**
+ * This function frees the memory dynamically allocated to Directory Entry (DE).
+ * 
+ * @param de The pointer to the DE
+ */
+void directory_entry_free(struct Directory_Entry *de);
+
+/**
  * This functions evaluates the Value Offset field of the DE and finds the actual Value if the Value Offset is stored.
  * 
  * @note If the Value is shorter than 4 bytes, it is left-justified within the 4-byte Value Offset. [TIFF Rev 6.0, p.15]
@@ -131,18 +138,25 @@ void directory_entry_print_info(struct Directory_Entry *de);
 void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh);
 
 /**
- * This function performs byte swap on the fields of Image File Header (IFH).
- * 
- * @param ifh The pointer to the IFH
- */
-void image_file_header_byte_swap(struct Image_File_Header *ifh);
-
-/**
  * This function prints information of Image File Directory (IFD).
  * 
  * @param ifd The pointer to the IFD
  */
 void image_file_directory_print_info(struct Image_File_Directory *ifd);
+
+/**
+ * This function frees the memory dynamically allocated to Image File Directory (IFD).
+ * 
+ * @param ifd The pointer to the IFD
+ */
+void image_file_directory_free(struct Image_File_Directory *ifd);
+
+/**
+ * This function performs byte swap on the fields of Image File Header (IFH).
+ * 
+ * @param ifh The pointer to the IFH
+ */
+void image_file_header_byte_swap(struct Image_File_Header *ifh);
 
 /**
  * This function constructs Directory Entries (DEs) in an Image File Directory (IFD) by parsing the given byte array.

@@ -382,11 +382,6 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
     }
 }
 
-void image_file_header_byte_swap(struct Image_File_Header *ifh) {
-    ifh->Magic_Number = __builtin_bswap16(ifh->Magic_Number);
-    ifh->IFD_Offset   = __builtin_bswap32(ifh->IFD_Offset);
-}
-
 void image_file_directory_print_info(struct Image_File_Directory *ifd) {
     printf("┌─────────────────────────────┬───────────┬───────┬───────────────────────────────────────────────────┐\n");
     printf("│             Tag             │   Type    │ Count │                       Value                       │\n");
@@ -400,6 +395,11 @@ void image_file_directory_print_info(struct Image_File_Directory *ifd) {
             printf("├─────────────────────────────┼───────────┼───────┼───────────────────────────────────────────────────┤\n");
         }
     }
+}
+
+void image_file_header_byte_swap(struct Image_File_Header *ifh) {
+    ifh->Magic_Number = __builtin_bswap16(ifh->Magic_Number);
+    ifh->IFD_Offset   = __builtin_bswap32(ifh->IFD_Offset);
 }
 
 uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh) {
