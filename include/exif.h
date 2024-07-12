@@ -167,14 +167,14 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh);
  * 
  * - DE with Tag 0x8825 contains offset to the GPS IFD from the first byte of the IFH.
  * 
- * @param to       The pointer to the DE
- * @param from     The pointer to the byte array to be parsed
+ * @param de       The pointer to the list of DE
+ * @param ptr      The pointer to the pointer to the byte array to be parsed
  * @param de_count The count of DEs in the IFD
  * @param ifh      The pointer to the IFH
  * 
- * @return A pointer to the first byte after the last DE
+ * @note The parameter ptr will be advanced by the length of the DEs.
  */
-uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh);
+void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_count, uint8_t *ifh);
 
 /**
  * This function constructs an Image Field Directory (IFD) by parsing the given byte array.
@@ -182,6 +182,8 @@ uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t d
  * @param ifd The pointer to the IFD
  * @param ptr The pointer to the pointer to the byte array to be parsed
  * @param ifh The pointer to the Image File Header (IFH)
+ * 
+ * @note The parameter ptr will be advanced by the length of the IFD.
  */
 void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
 
@@ -191,6 +193,8 @@ void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t
  * @param seg     The pointer to the Exif Segment
  * @param ptr     The pointer to the pointer to the byte array to be parsed
  * @param seg_len The length of the Exif Segment
+ * 
+ * @note The parameter ptr will be advanced by the length of the Exif Segment.
  */
 void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t seg_len);
 

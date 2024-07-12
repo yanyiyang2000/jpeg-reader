@@ -403,20 +403,15 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh) {
     ifh->IFD_Offset   = __builtin_bswap32(ifh->IFD_Offset);
 }
 
-uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t de_count, uint8_t *ifh) {
-    uint8_t *ptr = from; // pointer to the current byte
-
-    /* Obtain each DE */
+void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_count, uint8_t *ifh) {
     for (int i = 0; i < de_count; i++) {
-        memcpy(to + i, ptr, 12);
+        memcpy(de + i, *ptr, 12);
         if (need_byte_swap) {
-            directory_entry_byte_swap(to + i);
+            directory_entry_byte_swap(de + i);
         }
-        directory_entry_parse_value(to + i, ifh);
-        ptr += 12;
+        directory_entry_parse_value(de + i, ifh);
+        *ptr += 12;
     }
-
-    return ptr;
 }
 
 void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh) {
@@ -431,7 +426,7 @@ void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t
 
     /* Construct the DEs */
     ifd->DE = calloc(ifd->DE_Count, sizeof(struct Directory_Entry));
-    *ptr    = exif_construct_de(ifd->DE, *ptr, ifd->DE_Count, ifh);
+    exif_construct_de(ifd->DE, ptr, ifd->DE_Count, ifh);
 
     /* Obtain the IFD Offset field of the IFD */
     memcpy(&(ifd->IFD_Offset), *ptr, 4);
