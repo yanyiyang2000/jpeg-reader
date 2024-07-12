@@ -179,13 +179,11 @@ uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t d
 /**
  * This function constructs an Image Field Directory (IFD) by parsing the given byte array.
  * 
- * @param to   The pointer to the IFD
- * @param from The pointer to the byte array to be parsed
- * @param ifh  The pointer to the Image File Header (IFH)
- * 
- * @return A pointer to the next IFD
+ * @param ifd The pointer to the IFD
+ * @param ptr The pointer to the pointer to the byte array to be parsed
+ * @param ifh The pointer to the Image File Header (IFH)
  */
-uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint8_t *ifh);
+void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
 
 /**
  * This function constructs an Exif Segment by parsing the given byte array.

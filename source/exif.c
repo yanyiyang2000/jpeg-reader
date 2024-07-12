@@ -370,7 +370,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
 
         /* Construct Exif IFD and print information */
-        exif_construct_ifd(exif_ifd, from, ifh);
+        exif_construct_ifd(exif_ifd, &from, ifh);
         image_file_directory_print_info(exif_ifd);
         
     } else if (tag == 0x8825) {
@@ -378,7 +378,7 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
         uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
 
         /* Construct Exif IFD and print information */
-        exif_construct_ifd(gps_ifd, from, ifh);
+        exif_construct_ifd(gps_ifd, &from, ifh);
         image_file_directory_print_info(gps_ifd);
     }
 }
@@ -419,43 +419,40 @@ uint8_t* exif_construct_de(struct Directory_Entry *to, uint8_t *from, uint16_t d
     return ptr;
 }
 
-uint8_t* exif_construct_ifd(struct Image_File_Directory *to, uint8_t *from, uint8_t *ifh) {
-    uint8_t                *ptr       = from; // pointer to the current byte
+void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh) {
     uint16_t               de_count   = 0;    // count of DE
     uint32_t               ifd_offset = 0;    // offset of IFD
     struct Directory_Entry *de        = NULL; // pointer to the current DE
 
     /* Obtain the DE Count field of the IFD */
-    memcpy(&de_count, ptr, 2);
+    memcpy(&de_count, *ptr, 2);
     if (need_byte_swap) {
         de_count = __builtin_bswap16(de_count);
     }
-    to->DE_Count = de_count;
+    ifd->DE_Count = de_count;
 
     /* Skip the DE Count field, now pointing at the first Directory Entry (DE) */
-    ptr += 2; 
+    *ptr += 2; 
 
     /* Construct the DEs */
     de     = calloc(de_count, sizeof(struct Directory_Entry));
-    ptr    = exif_construct_de(de, ptr, de_count, ifh);
-    to->DE = de;
+    *ptr   = exif_construct_de(de, *ptr, de_count, ifh);
+    ifd->DE = de;
 
     /* Obtain the IFD Offset field of the IFD */
-    memcpy(&ifd_offset, ptr, 4);
+    memcpy(&ifd_offset, *ptr, 4);
     if (need_byte_swap) {
         ifd_offset = __builtin_bswap32(ifd_offset);
     }
-    to->IFD_Offset = ifd_offset;
+    ifd->IFD_Offset = ifd_offset;
 
     /**
      * Set the offset to point to the next IFD if exists, otherwise it means that there is no more IFD and hence the 
      * Marker Segment ends.
      */
     if (ifd_offset > 0) {
-        ptr = ifh + ifd_offset;
+        *ptr = ifh + ifd_offset;
     } // if this is the last IFD, offset value would not be useful so nothing is done here
-
-    return ptr;
 }
 
 void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t seg_len) {
@@ -483,7 +480,7 @@ void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t se
 
     /* Construct the 1st IFD and print the information */
     ifd = calloc(1, sizeof(struct Image_File_Directory));
-    *ptr = exif_construct_ifd(ifd, *ptr, ifh); // pointing at the next IFD if exists
+    exif_construct_ifd(ifd, ptr, ifh); // pointing at the next IFD if exists
     image_file_directory_print_info(ifd);
     
     /* Construct the remaining IFDs if exist and print the information */
@@ -491,7 +488,8 @@ void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t se
     while (curr_ifd->IFD_Offset != 0) { // The IFD Offset field of the last IFD is 0
         next_ifd = curr_ifd->Next_IFD;
         next_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        *ptr = exif_construct_ifd(next_ifd, *ptr, ifh);
+        // *ptr = exif_construct_ifd(next_ifd, *ptr, ifh);
+        exif_construct_ifd(next_ifd, ptr, ifh);
         image_file_directory_print_info(next_ifd);
         curr_ifd = next_ifd;
     }
