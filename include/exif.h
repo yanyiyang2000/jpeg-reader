@@ -121,13 +121,6 @@ void directory_entry_byte_swap(struct Directory_Entry *de);
 void directory_entry_print_info(struct Directory_Entry *de);
 
 /**
- * This function frees the memory dynamically allocated to Directory Entry (DE).
- * 
- * @param de The pointer to the DE
- */
-void directory_entry_free(struct Directory_Entry *de);
-
-/**
  * This functions evaluates the Value Offset field of the DE and finds the actual Value if the Value Offset is stored.
  * 
  * @note If the Value is shorter than 4 bytes, it is left-justified within the 4-byte Value Offset. [TIFF Rev 6.0, p.15]
@@ -143,13 +136,6 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh);
  * @param ifd The pointer to the IFD
  */
 void image_file_directory_print_info(struct Image_File_Directory *ifd);
-
-/**
- * This function frees the memory dynamically allocated to Image File Directory (IFD).
- * 
- * @param ifd The pointer to the IFD
- */
-void image_file_directory_free(struct Image_File_Directory *ifd);
 
 /**
  * This function performs byte swap on the fields of Image File Header (IFH).
@@ -172,7 +158,7 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh);
  * @param de_count The count of DEs in the IFD
  * @param ifh      The pointer to the IFH
  * 
- * @note The parameter ptr will be advanced by the length of the DEs.
+ * @note The parameter `ptr` will be advanced by the length of the DEs.
  */
 void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_count, uint8_t *ifh);
 
@@ -183,7 +169,7 @@ void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_co
  * @param ptr The pointer to the pointer to the byte array to be parsed
  * @param ifh The pointer to the Image File Header (IFH)
  * 
- * @note The parameter ptr will be advanced by the length of the IFD.
+ * @note The parameter `ptr` will be advanced by the length of the IFD.
  */
 void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
 
@@ -194,8 +180,15 @@ void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t
  * @param ptr     The pointer to the pointer to the byte array to be parsed
  * @param seg_len The length of the Exif Segment
  * 
- * @note The parameter ptr will be advanced by the length of the Exif Segment.
+ * @note The parameter `ptr` will be advanced by the length of the Exif Segment.
  */
 void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t seg_len);
+
+/**
+ * This function frees the memory dynamically allocated to the given Exif Segment.
+ * 
+ * @param seg The pointer to the Exif Segment
+ */
+void exif_free_segment(struct Exif_Segment *seg);
 
 #endif /* EXIF_H */

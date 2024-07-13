@@ -1,5 +1,6 @@
 #include <stdint.h> // uintXX_t
 #include <stdio.h>  // printf
+#include <stdlib.h> // free
 #include <string.h> // memcpy
 
 #include "jfif.h"
@@ -57,4 +58,8 @@ void jfif_construct_segment(struct JFIF_Segment *seg, uint8_t **ptr, uint16_t se
     }
 
     jfif_print_info(seg);
+}
+
+void jfif_free_segment(struct JFIF_Segment *seg) {
+    free(seg);
 }

@@ -27,12 +27,20 @@ struct __attribute__((packed)) Marker_Segment {
 /**
  * This function constructs a Marker Segment by parsing the given byte array.
  * 
- * @param seg     The pointer to the first byte of the Marker Segment
+ * @param seg     The pointer to the the Marker Segment
  * @param ptr     The pointer to the pointer to the byte array to be parsed
  * @param seg_len The length of the Marker Segment
  * 
- * @note The parameter ptr will be advanced by the length of the Marker Segment.
+ * @note The parameter `ptr` will be advanced by the length of the Marker Segment.
  */
 void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_t seg_len);
+
+/**
+ * This function frees the memory dynamically allocated to the given Marker Segments.
+ * 
+ * @param seg     A list of Marker Segments
+ * @param seg_cnt The number of Marker Segments
+ */
+void free_marker_segment(struct Marker_Segment *seg, uint8_t seg_cnt);
 
 #endif /* JPEG_H */

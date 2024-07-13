@@ -58,4 +58,9 @@ int main() {
         memcpy(id, ptr, 2);
 
     } while ( (id[1] & 0xF0) == 0xE0 );
+
+    /* Free all dynamically allocated memory */
+    for (uint8_t i = 0; i < 16; i++) {
+        free_marker_segment(segments[i], 16);
+    }
 }

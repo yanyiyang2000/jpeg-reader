@@ -44,8 +44,15 @@ void jfif_print_info(struct JFIF_Segment *segment);
  * @param ptr     The pointer to the pointer to the byte array to be parsed
  * @param seg_len The length of the JFIF Segment
  * 
- * @note The parameter ptr will be advanced by the length of the JFIF Segment.
+ * @note The parameter `ptr` will be advanced by the length of the JFIF Segment.
  */
 void jfif_construct_segment(struct JFIF_Segment *seg, uint8_t **ptr, uint16_t seg_len);
+
+/**
+ * This function frees the memory dynamically allocated to the given JFIF Segment.
+ * 
+ * @param seg The pointer to the JFIF Segment
+ */
+void jfif_free_segment(struct JFIF_Segment *seg);
 
 #endif /* JFIF_H */

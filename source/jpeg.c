@@ -22,18 +22,32 @@ void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_
     /* Skip the Length field, now pointing at the Identifier field */
     *ptr += 2;
 
-    /* Construct a specific Segment based on the Marker field */
+    /* Construct a specific Segment based on the Marker field and skip it */
     switch (seg->Marker[1]) {
         case 0xE0:
             jfif_segment = calloc(1, sizeof(struct JFIF_Segment));
-            jfif_construct_segment(jfif_segment, ptr, seg_len-2);
+            jfif_construct_segment(jfif_segment, ptr, seg_len - 2);
             seg->jfif_segment = jfif_segment;
             break;
 
         case 0xE1:
             exif_segment = calloc(1, sizeof(struct Exif_Segment));
-            exif_construct_segment(exif_segment, ptr, seg_len-2);
+            exif_construct_segment(exif_segment, ptr, seg_len - 2);
             seg->exif_segment = exif_segment;
             break;
+    }
+}
+
+void free_marker_segment(struct Marker_Segment *seg, uint8_t seg_cnt) {
+    for (uint8_t i = 0; i < seg_cnt; i++) {
+        switch ((seg + i)->Marker[1]) {
+            case 0xE0:
+                exif_free_segment((struct Exif_Segment *)seg);
+                break;
+
+            case 0xE1:
+                jfif_free_segment((struct JFIF_Segment *)seg);
+                break;
+        }
     }
 }
