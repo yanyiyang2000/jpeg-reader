@@ -160,7 +160,6 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh);
  * 
  * @note The parameter `ptr` will be advanced by the length of the DEs.
  */
-// void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_count, uint8_t *ifh);
 void exif_construct_de(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
 
 /**
