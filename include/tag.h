@@ -15,6 +15,7 @@ static struct Tag tags[] = {
     {"BitsPerSample",               0x0102},    // The number of bits per component
     {"Compression",                 0x0103},    // 1 = Uncompressed. 2 = CCITT 1D. 3 = Group 3 fax. 4 = Group 4 fax. 5 = LZW. 6 = JPEG. 32773 = PackBits
     {"PhotometricInterpretation",   0x0106},    // 0 = WhiteIsZero. 1 = BlackIsZero. 2 = RGB. 3 = Palette color. 4 = Transparency mask. 5 = Seperated. 6 = YCbCr. 
+    {"ImageDescription",            0x010E},    // The image description
     {"Make",                        0x010F},    // The manufacturer of the scanner, video digitizer, or other type of equipment used to generate the image
     {"Model",                       0x0110},    // The model name or number of the scanner, video digitizer, or other type of equipment used to generate the image
     {"Orientation",                 0x0112},    // The orientation of the image with respect to the rows and columns
@@ -36,6 +37,7 @@ static struct Tag tags[] = {
     /* Private Tags [Exif v3.0, pp.38-39] */
     {"Exif_IFD",                    0x8769},    // The offset of Exif IFD in bytes
     {"GPS_Info_IFD",                0x8825},    // The offset of GPS Info IFD in bytes
+    {"Interoperability_IFD",        0xA005},    // The offset of Interoperability IFD in bytes
 
     /* Private IFD (Exif IFD) Tags [Exif v3.0, pp.54-57] */
     {"ExposureTime",                0x829A},    // The exposure time in seconds
@@ -53,11 +55,14 @@ static struct Tag tags[] = {
     {"ApertureValue",               0x9202},    // The lens aperture in APEX value
     {"BrightnessValue",             0x9203},    // The brightness in APEX value
     {"ExposureBiasValue",           0x9204},    // The exposure bias in APEX value
+    {"MaxApertureValue",            0x9205},    // The max aperture value
     {"MeteringMode",                0x9207},    // 0 = Unknown. 1 = Average. 2 = Center-weighted average. 3 = Spot. 4 = Multi-spot. 5 = Pattern. 6 = Partial. 7 = Other.
+    {"LightSource",                 0x9208},    // The light source
     {"Flash",                       0x9209},    // The status of flash
     {"FocalLength",                 0x920A},    // The actual focal length in mm
     {"SubjectArea",                 0x9214},    // The location and area of the main subject in the overall scene
     {"MakerNote",                   0x927C},    // The maker note
+    {"UserComment",                 0x9286},    // The user comment
     {"SubsecTimeOriginal",          0x9291},    // The subseconds of the DateTimeOriginal tag
     {"SubsecTimeDigitized",         0x9292},    // The subseconds of the DateTimeDigitize tag
     {"FlashpixVersion",             0xA000},    // The Flashpix format version
@@ -65,11 +70,18 @@ static struct Tag tags[] = {
     {"PixelXDimension",             0xA002},    // The width of the image
     {"PixelYDimension",             0xA003},    // The height of the image
     {"SensingMethod",               0xA217},    // 1 = Not defined. 2 = One-chip color area sensor. 3 = Two-chip color area sensor. 4 = Three-chip color area sensor. 5 = Color sequential area sensor. 7 = Trilinear sensor. 8 = Color sequential linear sensor.
+    {"FileSource",                  0xA300},    // 1 = Scanner of transparent type. 2 = Scanner of reflex type. 3 = DSC.
     {"SceneType",                   0xA301},    // 1 = A directly photographed image.
+    {"CustomRendered",              0xA401},    // 0 = Normal process. 1 = Custom process.
     {"ExposureMode",                0xA402},    // 0 = Auto exposure. 1 = Manual exposure. 2 = Auto bracket.
     {"WhiteBalance",                0xA403},    // 0 = Auto white balance. 1 = Manual white balance.
+    {"DigitalZoomRatio",            0xA404},    // The digital zoom ratio
     {"FocalLengthIn35mmFilm",       0xA405},    // The equivalent focal length of a 35mm film camera
     {"SceneCaptureType",            0xA406},    // 0 = Standard. 1 = Landscape. 2 = Portrait. 3 = Night scene.
+    {"GainControl",                 0xA407},    // 0 = None. 1 = Low gain up. 2 = High gain up. 3 = Low gain down. 4 = High gain down.
+    {"Contrast",                    0xA408},    // 0 = Normal. 1 = Soft. 2 = Hard.
+    {"Saturation",                  0xA409},    // 0 = Normal. 1 = Low saturation. 2 = High saturation.
+    {"Sharpness",                   0xA40A},    // 0 = Normal. 1 = Soft. 2 = Hard.
     {"LensSpecification",           0xA432},    // Value 1: minimum focal length in mm. Value 2: maximum focal length in mm. Value 3: minimum F number in the minimum focal length. Value 4: minimum F number in the maximum focal length.
     {"LensMake",                    0xA433},    // The manufacturer of the lens
     {"LensModel",                   0xA434},    // The model name or number of the lens

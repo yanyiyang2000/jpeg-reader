@@ -24,7 +24,7 @@ uint16_t get_segment_length(uint8_t *offset) {
 
 int main() {
     FILE    *img          = NULL;   // file descriptor of the image                        
-    uint8_t buffer[10240] = {0};    // byte array containing image data
+    uint8_t buffer[40960] = {0};    // byte array containing image data
     uint8_t *ptr          = NULL;   // pointer to the current byte
 
     struct Marker_Segment *segments[16] = {0};  // list of Marker Segment pointers, 16 for now
@@ -33,7 +33,7 @@ int main() {
     uint8_t               seg_idx       = 0;    // index of the Marker Segment pointer in the list
 
     img = fopen("./images/test.jpeg", "rb");
-    fread(buffer, 10240, 1, img);
+    fread(buffer, 40960, 1, img);
 
     /* Set the pointer to point to the first byte of the image */
     ptr = buffer;
@@ -61,6 +61,8 @@ int main() {
 
     /* Free all dynamically allocated memory */
     for (uint8_t i = 0; i < 16; i++) {
-        free_marker_segment(segments[i], 16);
+        if (segments[i] != NULL) {
+            free_marker_segment(segments[i], 16);
+        }
     }
 }
