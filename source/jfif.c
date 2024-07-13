@@ -61,5 +61,6 @@ void jfif_construct_segment(struct JFIF_Segment *seg, uint8_t **ptr, uint16_t se
 }
 
 void jfif_free_segment(struct JFIF_Segment *seg) {
+    free(seg->RGBn);
     free(seg);
 }

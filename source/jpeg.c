@@ -38,16 +38,16 @@ void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_
     }
 }
 
-void free_marker_segment(struct Marker_Segment *seg, uint8_t seg_cnt) {
-    for (uint8_t i = 0; i < seg_cnt; i++) {
-        switch ((seg + i)->Marker[1]) {
-            case 0xE0:
-                exif_free_segment((struct Exif_Segment *)seg);
-                break;
+void free_marker_segment(struct Marker_Segment *seg) {
+    switch (seg->Marker[1]) {
+        case 0xE0:
+            jfif_free_segment(seg->jfif_segment);
+            break;
 
-            case 0xE1:
-                jfif_free_segment((struct JFIF_Segment *)seg);
-                break;
-        }
+        case 0xE1:
+            exif_free_segment(seg->exif_segment);
+            break;
     }
+
+    free(seg);
 }

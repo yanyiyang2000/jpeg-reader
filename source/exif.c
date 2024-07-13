@@ -396,7 +396,7 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh) {
 }
 
 void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_count, uint8_t *ifh) {
-    for (int i = 0; i < de_count; i++) {
+    for (uint16_t i = 0; i < de_count; i++) {
         memcpy(de + i, *ptr, 12);
         if (need_byte_swap) {
             directory_entry_byte_swap(de + i);
@@ -481,21 +481,27 @@ void exif_free_segment(struct Exif_Segment *seg) {
     struct Image_File_Directory *prev_ifd = NULL;
     struct Image_File_Directory *curr_ifd = seg->IFDs;
 
-    do {
-        /* Free the memory dynamically allocated to each Directory_Entry->Value */
-        for (uint8_t i = 0; i < curr_ifd->DE_Count; i++) {
-            free(((curr_ifd->DE) + i)->Value);
-        }
+    while (1) {
+        /* Free the memory dynamically allocated to each Exif_Segment->IFD->DE->Value */
+        // for (uint16_t i = 0; i < curr_ifd->DE_Count; i++) {
+        //     free(((curr_ifd->DE) + i)->Value);
+        // }
+        free(curr_ifd->DE->Value);
 
-        /* Free the memory dynamically allocated to Image_File_Directory->DE */
+        /* Free the memory dynamically allocated to Exif_Segment->IFD->DE */
         free(curr_ifd->DE);
 
-        /* Free the memory dynamically allocated to Exif_Segment->IFD */
+        /* Free the memory dynamically allocated to each Exif_Segment->IFD */
         prev_ifd = curr_ifd;
         curr_ifd = curr_ifd->Next_IFD;
-        free(prev_ifd);
-    } while (curr_ifd->IFD_Offset != 0);
+        if (prev_ifd->IFD_Offset == 0) {
+            free(prev_ifd);
+            break;
+        } else {
+            free(prev_ifd);
+        }
+    }
 
-    /* Free the memory dynamically allocated to Marker_Segment->Exif_Segment */
+    /* Free the memory dynamically allocated to Exif_Segment */
     free(seg);
 }

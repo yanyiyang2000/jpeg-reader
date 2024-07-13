@@ -59,10 +59,12 @@ int main() {
 
     } while ( (id[1] & 0xF0) == 0xE0 );
 
+    fclose(img);
+
     /* Free all dynamically allocated memory */
     for (uint8_t i = 0; i < 16; i++) {
         if (segments[i] != NULL) {
-            free_marker_segment(segments[i], 16);
+            free_marker_segment(segments[i]);
         }
     }
 }

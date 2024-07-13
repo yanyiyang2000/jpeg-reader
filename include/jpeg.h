@@ -38,9 +38,8 @@ void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_
 /**
  * This function frees the memory dynamically allocated to the given Marker Segments.
  * 
- * @param seg     A list of Marker Segments
- * @param seg_cnt The number of Marker Segments
+ * @param seg The pointer to the Marker Segments
  */
-void free_marker_segment(struct Marker_Segment *seg, uint8_t seg_cnt);
+void free_marker_segment(struct Marker_Segment *seg);
 
 #endif /* JPEG_H */
