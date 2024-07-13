@@ -395,13 +395,24 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh) {
     ifh->IFD_Offset   = __builtin_bswap32(ifh->IFD_Offset);
 }
 
-void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_count, uint8_t *ifh) {
-    for (uint16_t i = 0; i < de_count; i++) {
-        memcpy(de + i, *ptr, 12);
+// void exif_construct_de(struct Directory_Entry *de, uint8_t **ptr, uint16_t de_count, uint8_t *ifh) {
+//     for (uint16_t i = 0; i < de_count; i++) {
+//         memcpy(de + i, *ptr, 12);
+//         if (need_byte_swap) {
+//             directory_entry_byte_swap(de + i);
+//         }
+//         directory_entry_parse_value(de + i, ifh);
+//         *ptr += 12;
+//     }
+// }
+
+void exif_construct_de(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh) {
+    for (uint16_t i = 0; i < ifd->DE_Count; i++) {
+        memcpy(ifd->DE + i, *ptr, 12);
         if (need_byte_swap) {
-            directory_entry_byte_swap(de + i);
+            directory_entry_byte_swap(ifd->DE + i);
         }
-        directory_entry_parse_value(de + i, ifh);
+        directory_entry_parse_value(ifd->DE + i, ifh);
         *ptr += 12;
     }
 }
@@ -418,7 +429,8 @@ void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t
 
     /* Construct the DEs and skip them */
     ifd->DE = calloc(ifd->DE_Count, sizeof(struct Directory_Entry));
-    exif_construct_de(ifd->DE, ptr, ifd->DE_Count, ifh);
+    // exif_construct_de(ifd->DE, ptr, ifd->DE_Count, ifh);
+    exif_construct_de(ifd, ptr, ifh);
 
     /* Obtain the IFD Offset field of the IFD */
     memcpy(&(ifd->IFD_Offset), *ptr, 4);
@@ -481,12 +493,12 @@ void exif_free_segment(struct Exif_Segment *seg) {
     struct Image_File_Directory *prev_ifd = NULL;
     struct Image_File_Directory *curr_ifd = seg->IFDs;
 
+    /* TODO: seg fault */
     while (1) {
         /* Free the memory dynamically allocated to each Exif_Segment->IFD->DE->Value */
-        // for (uint16_t i = 0; i < curr_ifd->DE_Count; i++) {
-        //     free(((curr_ifd->DE) + i)->Value);
-        // }
-        free(curr_ifd->DE->Value);
+        for (uint16_t i = 0; i < curr_ifd->DE_Count; i++) {
+            free(((curr_ifd->DE) + i)->Value);
+        }
 
         /* Free the memory dynamically allocated to Exif_Segment->IFD->DE */
         free(curr_ifd->DE);
