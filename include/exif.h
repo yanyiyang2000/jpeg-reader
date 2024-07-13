@@ -102,6 +102,8 @@ struct __attribute__((packed)) Exif_Segment {
     uint8_t                     Identifier[6];  /* The identifier of the Segment. (i.e., Double NULL-terminated ASCII string "Exif\0\0") */
     struct Image_File_Header    IFH;            /* The Image File Header */
     struct Image_File_Directory *IFDs;          /* The pointer to the first IFD */
+    struct Image_File_Directory *Exif_IFD;      /* The pointer to the Exif IFD */
+    struct Image_File_Directory *GPS_IFD;       /* The pointer to the GPS IFD */
 };
 
 /**
@@ -128,7 +130,8 @@ void directory_entry_print_info(struct Directory_Entry *de);
  * @param de  The pointer to the DE
  * @param ifh The pointer to the Image File Header (IFD) of APP1 Marker Segment
  */
-void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh);
+// void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh);
+void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entry *de, uint8_t *ifh);
 
 /**
  * This function prints information of Image File Directory (IFD).
@@ -160,7 +163,7 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh);
  * 
  * @note The parameter `ptr` will be advanced by the length of the DEs.
  */
-void exif_construct_de(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
+void exif_construct_de(struct Exif_Segment *seg, struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
 
 /**
  * This function constructs an Image Field Directory (IFD) by parsing the given byte array.
@@ -171,7 +174,7 @@ void exif_construct_de(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t 
  * 
  * @note The parameter `ptr` will be advanced by the length of the IFD.
  */
-void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
+void exif_construct_ifd(struct Exif_Segment *seg, struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh);
 
 /**
  * This function constructs an Exif Segment by parsing the given byte array.

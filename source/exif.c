@@ -131,7 +131,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
     }
 }
 
-void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
+void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entry *de, uint8_t *ifh) {
     uint32_t offset = 0; // value offset
     uint32_t value  = 0; // actual value
 
@@ -358,20 +358,20 @@ void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh) {
     }
 
     if (de->Tag == 0x8769) {
-        struct Image_File_Directory *exif_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
+        seg->Exif_IFD = calloc(1, sizeof(struct Image_File_Directory));
+        uint8_t *ptr  = ifh + *((uint32_t *)(de->Value));
 
         /* Construct Exif IFD and print information */
-        exif_construct_ifd(exif_ifd, &from, ifh);
-        image_file_directory_print_info(exif_ifd);
+        exif_construct_ifd(seg, seg->Exif_IFD, &ptr, ifh);
+        image_file_directory_print_info(seg->Exif_IFD);
         
     } else if (de->Tag == 0x8825) {
-        struct Image_File_Directory *gps_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        uint8_t                     *from     = ifh + *((uint32_t *)(de->Value));
+        seg->GPS_IFD = calloc(1, sizeof(struct Image_File_Directory));
+        uint8_t *ptr  = ifh + *((uint32_t *)(de->Value));
 
         /* Construct Exif IFD and print information */
-        exif_construct_ifd(gps_ifd, &from, ifh);
-        image_file_directory_print_info(gps_ifd);
+        exif_construct_ifd(seg, seg->GPS_IFD, &ptr, ifh);
+        image_file_directory_print_info(seg->GPS_IFD);
     }
 }
 
@@ -395,18 +395,18 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh) {
     ifh->IFD_Offset   = __builtin_bswap32(ifh->IFD_Offset);
 }
 
-void exif_construct_de(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh) {
+void exif_construct_de(struct Exif_Segment *seg, struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh) {
     for (uint16_t i = 0; i < ifd->DE_Count; i++) {
         memcpy(ifd->DE + i, *ptr, 12);
         if (need_byte_swap) {
             directory_entry_byte_swap(ifd->DE + i);
         }
-        directory_entry_parse_value(ifd->DE + i, ifh);
+        directory_entry_parse_value(seg, ifd->DE + i, ifh);
         *ptr += 12;
     }
 }
 
-void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh) {
+void exif_construct_ifd(struct Exif_Segment *seg, struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t *ifh) {
     /* Obtain the DE Count field of the IFD */
     memcpy(&(ifd->DE_Count), *ptr, 2);
     if (need_byte_swap) {
@@ -418,8 +418,7 @@ void exif_construct_ifd(struct Image_File_Directory *ifd, uint8_t **ptr, uint8_t
 
     /* Construct the DEs and skip them */
     ifd->DE = calloc(ifd->DE_Count, sizeof(struct Directory_Entry));
-    // exif_construct_de(ifd->DE, ptr, ifd->DE_Count, ifh);
-    exif_construct_de(ifd, ptr, ifh);
+    exif_construct_de(seg, ifd, ptr, ifh);
 
     /* Obtain the IFD Offset field of the IFD */
     memcpy(&(ifd->IFD_Offset), *ptr, 4);
@@ -461,7 +460,7 @@ void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t se
 
     /* Construct the first IFD, print the information and skip it */
     ifd = calloc(1, sizeof(struct Image_File_Directory));
-    exif_construct_ifd(ifd, ptr, ifh);
+    exif_construct_ifd(seg, ifd, ptr, ifh);
     image_file_directory_print_info(ifd);
     
     /* Construct the remaining IFDs if exist, print the information and skip them */
@@ -469,7 +468,7 @@ void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t se
     while (curr_ifd->IFD_Offset != 0) { // The IFD Offset field of the last IFD is 0
         next_ifd = curr_ifd->Next_IFD;
         next_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        exif_construct_ifd(next_ifd, ptr, ifh);
+        exif_construct_ifd(seg, next_ifd, ptr, ifh);
         image_file_directory_print_info(next_ifd);
         curr_ifd = next_ifd;
     }
@@ -482,7 +481,7 @@ void exif_free_segment(struct Exif_Segment *seg) {
     struct Image_File_Directory *prev_ifd = NULL;
     struct Image_File_Directory *curr_ifd = seg->IFDs;
 
-    /* TODO: seg fault */
+    /* Free the memory dynamically allocated to IFDs */
     while (1) {
         /* Free the memory dynamically allocated to each Exif_Segment->IFD->DE->Value */
         for (uint16_t i = 0; i < curr_ifd->DE_Count; i++) {
@@ -501,6 +500,16 @@ void exif_free_segment(struct Exif_Segment *seg) {
         } else {
             free(prev_ifd);
         }
+    }
+    
+    /* Free the memory dynamically allocated to Exif IFD */
+    if (seg->Exif_IFD != NULL) {
+        free(seg->Exif_IFD);
+    }
+
+    /* Free the memory dynamically allocated to GPS IFD */
+    if (seg->GPS_IFD != NULL) {
+        free(seg->GPS_IFD);
     }
 
     /* Free the memory dynamically allocated to Exif_Segment */
