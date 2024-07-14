@@ -38,7 +38,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
     /* Print the field tag name, field type, field value count and field values */
     if (de->Type == BYTE) {
 
-        uint8_t *ptr = de->Value;
+        uint8_t *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu8" │\n", tag_name, "BYTE", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu8" │\n", "", "", "", *(ptr + i));
@@ -46,7 +46,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == SBYTE) {
 
-        int8_t *ptr = de->Value;
+        int8_t *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId8" │\n", tag_name, "SBYTE", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId8" │\n", "", "", "", *(ptr + i));
@@ -54,11 +54,11 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == ASCII) {
 
-        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "ASCII", de->Value_Count, (char *)(de->Value));
+        printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49s │\n", tag_name, "ASCII", de->Value_Count, (char *)(de->Values));
 
     } else if (de->Type == SHORT) {
 
-        uint16_t *ptr = de->Value;
+        uint16_t *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu16" │\n", tag_name, "SHORT", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu16" │\n", "", "", "", *(ptr + i));
@@ -66,7 +66,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == SSHORT) {
 
-        int16_t *ptr = de->Value;
+        int16_t *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId16" │\n", tag_name, "SSHORT", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId16" │\n", "", "", "", *(ptr + i));
@@ -74,7 +74,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == LONG) {
 
-        uint32_t *ptr = de->Value;
+        uint32_t *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRIu32" │\n", tag_name, "LONG", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRIu32" │\n", "", "", "", *(ptr + i));
@@ -82,7 +82,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == SLONG) {
 
-        int32_t *ptr = de->Value;
+        int32_t *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49"PRId32" │\n", tag_name, "SLONG", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49"PRId32" │\n", "", "", "", *(ptr + i));
@@ -90,7 +90,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == RATIONAL) {
 
-        uint32_t *ptr = de->Value;
+        uint32_t *ptr = de->Values;
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %24"PRIu32"/%-24"PRIu32" │\n", tag_name, "RATIONAL", value_count, *ptr, *(ptr + 1));
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49.2f │\n", tag_name, "RATIONAL", de->Value_Count, (double)(*ptr)/(*(ptr + 1)));
@@ -101,7 +101,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == SRATIONAL) {
 
-        int32_t *ptr = de->Value;
+        int32_t *ptr = de->Values;
         /* Uncomment to print in fraction */
         // printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %24"PRId32"/%-24"PRId32" │\n", tag_name, "SRATIONAL", value_count, *ptr, *(ptr + 1));
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49.2f │\n", tag_name, "SRATIONAL", de->Value_Count, (double)(*ptr)/(*(ptr + 1)));
@@ -112,7 +112,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
 
     } else if (de->Type == FLOAT) {
 
-        float *ptr = de->Value;
+        float *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "FLOAT", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
@@ -120,7 +120,7 @@ void directory_entry_print_info(struct Directory_Entry *de) {
         
     } else if (de->Type == DOUBLE) {
 
-        double *ptr = de->Value;
+        double *ptr = de->Values;
         printf("│ %-27s │ %-9s │ %-5"PRIu32" │ %-49f │\n", tag_name, "DOUBLE", de->Value_Count, *ptr);
         for (uint8_t i = 1; i < de->Value_Count; i++) {
             printf("│ %-27s | %-9s │ %-5s │ %-49f │\n", "", "", "", *(ptr + i));
@@ -146,8 +146,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         if (de->Value_Count <= 4) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 1);
-            memcpy(de->Value, &value, de->Value_Count);
+            de->Values = calloc(de->Value_Count, 1);
+            memcpy(de->Values, &value, de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -155,8 +155,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 1);
-            memcpy(de->Value, ifh + offset, de->Value_Count);
+            de->Values = calloc(de->Value_Count, 1);
+            memcpy(de->Values, ifh + offset, de->Value_Count);
         }
 
     } else if (de->Type == SBYTE) {
@@ -164,8 +164,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         if (de->Value_Count <= 4) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 1);
-            memcpy(de->Value, &value, de->Value_Count);
+            de->Values = calloc(de->Value_Count, 1);
+            memcpy(de->Values, &value, de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -173,8 +173,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 1);
-            memcpy(de->Value, ifh + offset, de->Value_Count);
+            de->Values = calloc(de->Value_Count, 1);
+            memcpy(de->Values, ifh + offset, de->Value_Count);
         }
 
     } else if (de->Type == SHORT) {
@@ -182,8 +182,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         if (de->Value_Count <= 2) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 2);
-            memcpy(de->Value, &value, 2*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 2);
+            memcpy(de->Values, &value, 2*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -191,13 +191,13 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 2);
-            memcpy(de->Value, ifh + offset, 2*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 2);
+            memcpy(de->Values, ifh + offset, 2*de->Value_Count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < de->Value_Count; i++) {
-                *((uint16_t *)(de->Value + i)) = __builtin_bswap16( *((uint16_t *)(de->Value + i)) );
+                *((uint16_t *)(de->Values + i)) = __builtin_bswap16( *((uint16_t *)(de->Values + i)) );
             }
         }
 
@@ -206,8 +206,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         if (de->Value_Count <= 2) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 2);
-            memcpy(de->Value, &value, 2*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 2);
+            memcpy(de->Values, &value, 2*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -215,13 +215,13 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 2);
-            memcpy(de->Value, ifh + offset, 2*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 2);
+            memcpy(de->Values, ifh + offset, 2*de->Value_Count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < de->Value_Count; i++) {
-                *((int16_t *)(de->Value + i)) = __builtin_bswap16( *((int16_t *)(de->Value + i)) );
+                *((int16_t *)(de->Values + i)) = __builtin_bswap16( *((int16_t *)(de->Values + i)) );
             }
         }
 
@@ -230,8 +230,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         if (de->Value_Count <= 1) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 4);
-            memcpy(de->Value, &value, 4*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 4);
+            memcpy(de->Values, &value, 4*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -239,13 +239,13 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 4);
-            memcpy(de->Value, ifh + offset, 4*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 4);
+            memcpy(de->Values, ifh + offset, 4*de->Value_Count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < de->Value_Count; i++) {
-                *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
+                *((uint32_t *)(de->Values + i)) = __builtin_bswap32( *((uint32_t *)(de->Values + i)) );
             }
         }
 
@@ -254,8 +254,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         if (de->Value_Count <= 1) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 4);
-            memcpy(de->Value, &value, 4*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 4);
+            memcpy(de->Values, &value, 4*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -263,13 +263,13 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 4);
-            memcpy(de->Value, ifh + offset, 4*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 4);
+            memcpy(de->Values, ifh + offset, 4*de->Value_Count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < de->Value_Count; i++) {
-                *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
+                *((uint32_t *)(de->Values + i)) = __builtin_bswap32( *((uint32_t *)(de->Values + i)) );
             }
         }
 
@@ -278,8 +278,8 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         if (de->Value_Count <= 1) { // Value presents
             value = de->Value_Offset;
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 4);
-            memcpy(de->Value, &value, 4*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 4);
+            memcpy(de->Values, &value, 4*de->Value_Count);
         } else {                    // Offset presents
             if (need_byte_swap) {
                 offset = __builtin_bswap32(de->Value_Offset);
@@ -287,13 +287,13 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
                 offset = de->Value_Offset;
             }
             de->Value_Offset = 0;
-            de->Value = calloc(de->Value_Count, 4);
-            memcpy(de->Value, ifh + offset, 4*de->Value_Count);
+            de->Values = calloc(de->Value_Count, 4);
+            memcpy(de->Values, ifh + offset, 4*de->Value_Count);
         }
 
         if (need_byte_swap) {
             for (int i = 0; i < de->Value_Count; i++) {
-                *((float *)(de->Value + i)) = __builtin_bswap32( *((float *)(de->Value + i)) );
+                *((float *)(de->Values + i)) = __builtin_bswap32( *((float *)(de->Values + i)) );
             }
         }
 
@@ -306,12 +306,12 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
             offset = de->Value_Offset;
         }
         de->Value_Offset = 0;
-        de->Value = calloc(2*de->Value_Count, 4); // a RATIONAL consists of two LONGs
-        memcpy(de->Value, ifh + offset, 8*de->Value_Count);
+        de->Values = calloc(2*de->Value_Count, 4); // a RATIONAL consists of two LONGs
+        memcpy(de->Values, ifh + offset, 8*de->Value_Count);
 
         if (need_byte_swap) {
             for (int i = 0; i < 2*de->Value_Count; i++) {
-                *((uint32_t *)(de->Value + i)) = __builtin_bswap32( *((uint32_t *)(de->Value + i)) );
+                *((uint32_t *)(de->Values + i)) = __builtin_bswap32( *((uint32_t *)(de->Values + i)) );
             }
         }
 
@@ -324,12 +324,12 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
             offset = de->Value_Offset;
         }
         de->Value_Offset = 0;
-        de->Value = calloc(2*de->Value_Count, 4); // a SRATIONAL consists of two SLONGs
-        memcpy(de->Value, ifh + offset, 8*de->Value_Count);
+        de->Values = calloc(2*de->Value_Count, 4); // a SRATIONAL consists of two SLONGs
+        memcpy(de->Values, ifh + offset, 8*de->Value_Count);
 
         if (need_byte_swap) {
             for (int i = 0; i < 2*de->Value_Count; i++) {
-                *((int32_t *)(de->Value + i)) = __builtin_bswap32( *((int32_t *)(de->Value + i)) );
+                *((int32_t *)(de->Values + i)) = __builtin_bswap32( *((int32_t *)(de->Values + i)) );
             }
         }
 
@@ -342,12 +342,12 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
             offset = de->Value_Offset;
         }
         de->Value_Offset = 0;
-        de->Value = calloc(de->Value_Count, 8);
-        memcpy(de->Value, ifh + offset, de->Value_Count);
+        de->Values = calloc(de->Value_Count, 8);
+        memcpy(de->Values, ifh + offset, de->Value_Count);
 
         if (need_byte_swap) {
             for (int i = 0; i < de->Value_Count; i++) {
-                *((double *)(de->Value + i)) = __builtin_bswap64( *((double *)(de->Value + i)) );
+                *((double *)(de->Values + i)) = __builtin_bswap64( *((double *)(de->Values + i)) );
             }
         }
 
@@ -359,7 +359,7 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
 
     if (de->Tag == 0x8769) {
         seg->Exif_IFD = calloc(1, sizeof(struct Image_File_Directory));
-        uint8_t *ptr  = ifh + *((uint32_t *)(de->Value));
+        uint8_t *ptr  = ifh + *((uint32_t *)(de->Values));
 
         /* Construct Exif IFD and print information */
         exif_construct_ifd(seg, seg->Exif_IFD, &ptr, ifh);
@@ -367,7 +367,7 @@ void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entr
         
     } else if (de->Tag == 0x8825) {
         seg->GPS_IFD = calloc(1, sizeof(struct Image_File_Directory));
-        uint8_t *ptr  = ifh + *((uint32_t *)(de->Value));
+        uint8_t *ptr  = ifh + *((uint32_t *)(de->Values));
 
         /* Construct Exif IFD and print information */
         exif_construct_ifd(seg, seg->GPS_IFD, &ptr, ifh);
@@ -481,7 +481,7 @@ void exif_free_segment(struct Exif_Segment *seg) {
     while (1) {
         /* Free the memory dynamically allocated to each Exif_Segment->IFD->DE->Value */
         for (uint16_t i = 0; i < curr_ifd->DE_Count; i++) {
-            free(((curr_ifd->DE) + i)->Value);
+            free(((curr_ifd->DE) + i)->Values);
         }
 
         /* Free the memory dynamically allocated to Exif_Segment->IFD->DE */
@@ -501,7 +501,7 @@ void exif_free_segment(struct Exif_Segment *seg) {
     if (seg->Exif_IFD != NULL) {
         /* Free the memory dynamically allocated to each Exif_Segment->Exif_IFD->DE->Value */
         for (uint16_t i = 0; i < seg->Exif_IFD->DE_Count; i++) {
-            free(((seg->Exif_IFD->DE) + i)->Value);
+            free(((seg->Exif_IFD->DE) + i)->Values);
         }
 
         /* Free the memory dynamically allocated to Exif_Segment->Exif_IFD->DE */
@@ -514,7 +514,7 @@ void exif_free_segment(struct Exif_Segment *seg) {
     if (seg->GPS_IFD != NULL) {
         /* Free the memory dynamically allocated to each Exif_Segment->GPS_IFD->DE->Value */
         for (uint16_t i = 0; i < seg->GPS_IFD->DE_Count; i++) {
-            free(((seg->GPS_IFD->DE) + i)->Value);
+            free(((seg->GPS_IFD->DE) + i)->Values);
         }
 
         /* Free the memory dynamically allocated to Exif_Segment->GPS_IFD->DE */

@@ -147,9 +147,11 @@ struct __attribute__((packed)) JFIF_Segment {
 Struct `Exif_Segment` is defined as
 ```c
 struct __attribute__((packed)) Exif_Segment {
-    uint8_t                      Identifier[6];
-    struct Image_File_Header     IFH;
-    struct Image_File_Directory  *IFDs;
+    uint8_t                     Identifier[6];
+    struct Image_File_Header    IFH;
+    struct Image_File_Directory *IFDs;
+    struct Image_File_Directory *Exif_IFD;
+    struct Image_File_Directory *GPS_IFD;
 };
 ```
 
@@ -183,7 +185,7 @@ struct __attribute__((packed)) Directory_Entry {
     uint32_t Value_Count;
     union {
         uint32_t Value_Offset;
-        void     *Value;
+        void     *Values;
     };
 };
 ```

@@ -54,7 +54,7 @@ struct __attribute__((packed)) Directory_Entry {
     uint32_t Value_Count;       /* The number of field values */
     union {
         uint32_t Value_Offset;  /* The offset of the field values */
-        void     *Value;        /* The pointer to the field values */
+        void     *Values;        /* The pointer to the field values */
     };
 };
 
