@@ -127,10 +127,10 @@ void directory_entry_print_info(struct Directory_Entry *de);
  * 
  * @note If the Value is shorter than 4 bytes, it is left-justified within the 4-byte Value Offset. [TIFF Rev 6.0, p.15]
  * 
+ * @param seg The pointer to the Exif Segment
  * @param de  The pointer to the DE
  * @param ifh The pointer to the Image File Header (IFD) of APP1 Marker Segment
  */
-// void directory_entry_parse_value(struct Directory_Entry *de, uint8_t *ifh);
 void directory_entry_parse_value(struct Exif_Segment *seg, struct Directory_Entry *de, uint8_t *ifh);
 
 /**
@@ -156,10 +156,9 @@ void image_file_header_byte_swap(struct Image_File_Header *ifh);
  * 
  * - DE with Tag 0x8825 contains offset to the GPS IFD from the first byte of the IFH.
  * 
- * @param de       The pointer to the list of DE
- * @param ptr      The pointer to the pointer to the byte array to be parsed
- * @param de_count The count of DEs in the IFD
- * @param ifh      The pointer to the IFH
+ * @param seg The pointer to the Exif Segment
+ * @param ptr The pointer to the pointer to the byte array to be parsed
+ * @param ifh The pointer to the IFH
  * 
  * @note The parameter `ptr` will be advanced by the length of the DEs.
  */
@@ -168,6 +167,7 @@ void exif_construct_de(struct Exif_Segment *seg, struct Image_File_Directory *if
 /**
  * This function constructs an Image Field Directory (IFD) by parsing the given byte array.
  * 
+ * @param seg The pointer to the Exif Segment
  * @param ifd The pointer to the IFD
  * @param ptr The pointer to the pointer to the byte array to be parsed
  * @param ifh The pointer to the Image File Header (IFH)
