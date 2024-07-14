@@ -24,8 +24,7 @@ target_include_directories(
 target_compile_options(
     test
     PUBLIC
-    -Og
+    -O0
     -g3
-    -ggdb3
     -Wall
 )

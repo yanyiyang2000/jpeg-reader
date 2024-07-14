@@ -45,7 +45,7 @@ void free_marker_segment(struct Marker_Segment *seg) {
             break;
 
         case 0xE1:
-            // exif_free_segment(seg->exif_segment); // TODO: seg fault
+            exif_free_segment(seg->exif_segment); // TODO: seg fault
             break;
     }
 

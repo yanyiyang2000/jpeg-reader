@@ -9,8 +9,7 @@ target_include_directories(
 target_compile_options(
     jpeg-reader
     PUBLIC
-    -Og
+    -O0
     -g3
-    -ggdb3
     -Wall
 )

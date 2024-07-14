@@ -437,9 +437,7 @@ void exif_construct_ifd(struct Exif_Segment *seg, struct Image_File_Directory *i
 
 void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t seg_len) {
     uint8_t                     *ifh      = NULL; // pointer to the first byte of the IFH
-    struct Image_File_Directory *ifd      = NULL; // pointer to the first IFD
     struct Image_File_Directory *curr_ifd = NULL; // pointer to the current IFD
-    struct Image_File_Directory *next_ifd = NULL; // pointer to the next IFD
 
     /* Obtain the Identifier field of the Exif Segment */
     memcpy(seg->Identifier, *ptr, 6);
@@ -459,18 +457,17 @@ void exif_construct_segment(struct Exif_Segment *seg, uint8_t **ptr, uint16_t se
     *ptr += seg->IFH.IFD_Offset;
 
     /* Construct the first IFD, print the information and skip it */
-    ifd = calloc(1, sizeof(struct Image_File_Directory));
-    exif_construct_ifd(seg, ifd, ptr, ifh);
-    image_file_directory_print_info(ifd);
+    seg->IFDs = calloc(1, sizeof(struct Image_File_Directory));
+    exif_construct_ifd(seg, seg->IFDs, ptr, ifh);
+    image_file_directory_print_info(seg->IFDs);
     
     /* Construct the remaining IFDs if exist, print the information and skip them */
-    curr_ifd = ifd; 
+    curr_ifd = seg->IFDs;
     while (curr_ifd->IFD_Offset != 0) { // The IFD Offset field of the last IFD is 0
-        next_ifd = curr_ifd->Next_IFD;
-        next_ifd = calloc(1, sizeof(struct Image_File_Directory));
-        exif_construct_ifd(seg, next_ifd, ptr, ifh);
-        image_file_directory_print_info(next_ifd);
-        curr_ifd = next_ifd;
+        curr_ifd->Next_IFD = calloc(1, sizeof(struct Image_File_Directory));
+        exif_construct_ifd(seg, curr_ifd->Next_IFD, ptr, ifh);
+        image_file_directory_print_info(curr_ifd->Next_IFD);
+        curr_ifd = curr_ifd->Next_IFD;
     }
 
     /* Skip the Exif Segment, now pointing at the next Marker Segment */
@@ -481,7 +478,6 @@ void exif_free_segment(struct Exif_Segment *seg) {
     struct Image_File_Directory *prev_ifd = NULL;
     struct Image_File_Directory *curr_ifd = seg->IFDs;
 
-    /* Free the memory dynamically allocated to IFDs */
     while (1) {
         /* Free the memory dynamically allocated to each Exif_Segment->IFD->DE->Value */
         for (uint16_t i = 0; i < curr_ifd->DE_Count; i++) {
@@ -502,13 +498,29 @@ void exif_free_segment(struct Exif_Segment *seg) {
         }
     }
     
-    /* Free the memory dynamically allocated to Exif IFD */
     if (seg->Exif_IFD != NULL) {
+        /* Free the memory dynamically allocated to each Exif_Segment->Exif_IFD->DE->Value */
+        for (uint16_t i = 0; i < seg->Exif_IFD->DE_Count; i++) {
+            free(((seg->Exif_IFD->DE) + i)->Value);
+        }
+
+        /* Free the memory dynamically allocated to Exif_Segment->Exif_IFD->DE */
+        free(seg->Exif_IFD->DE);
+
+        /* Free the memory dynamically allocated to Exif_Segment->Exif_IFD */
         free(seg->Exif_IFD);
     }
 
-    /* Free the memory dynamically allocated to GPS IFD */
     if (seg->GPS_IFD != NULL) {
+        /* Free the memory dynamically allocated to each Exif_Segment->GPS_IFD->DE->Value */
+        for (uint16_t i = 0; i < seg->GPS_IFD->DE_Count; i++) {
+            free(((seg->GPS_IFD->DE) + i)->Value);
+        }
+
+        /* Free the memory dynamically allocated to Exif_Segment->GPS_IFD->DE */
+        free(seg->GPS_IFD->DE);
+
+        /* Free the memory dynamically allocated to Exif_Segment->GPS_IFD */
         free(seg->GPS_IFD);
     }
 
