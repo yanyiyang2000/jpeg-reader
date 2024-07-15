@@ -6,7 +6,7 @@
 #include "exif.h"
 
 
-void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_t seg_len) {
+void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr) {
     struct JFIF_Segment *jfif_segment = NULL; // pointer to the JFIF Segment
     struct Exif_Segment *exif_segment = NULL; // pointer to the Exif Segment
 
@@ -16,8 +16,9 @@ void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_
     /* Skip the Marker field, now pointing at the Length field */
     *ptr += 2;
 
-    /* Assign value to the Length field */
-    seg->Length = seg_len;
+    /* Obtain value to the Length field */
+    memcpy(&seg->Length, ptr, 2);
+    seg->Length = __builtin_bswap16(seg->Length);
 
     /* Skip the Length field, now pointing at the Identifier field */
     *ptr += 2;
@@ -26,13 +27,13 @@ void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr, uint16_
     switch (seg->Marker[1]) {
         case 0xE0:
             jfif_segment = calloc(1, sizeof(struct JFIF_Segment));
-            jfif_construct_segment(jfif_segment, ptr, seg_len - 2);
+            jfif_construct_segment(jfif_segment, ptr, seg->Length - 2);
             seg->jfif_segment = jfif_segment;
             break;
 
         case 0xE1:
             exif_segment = calloc(1, sizeof(struct Exif_Segment));
-            exif_construct_segment(exif_segment, ptr, seg_len - 2);
+            exif_construct_segment(exif_segment, ptr, seg->Length - 2);
             seg->exif_segment = exif_segment;
             break;
     }
@@ -45,7 +46,7 @@ void free_marker_segment(struct Marker_Segment *seg) {
             break;
 
         case 0xE1:
-            exif_free_segment(seg->exif_segment); // TODO: seg fault
+            exif_free_segment(seg->exif_segment);
             break;
     }
 

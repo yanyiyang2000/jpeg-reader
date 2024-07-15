@@ -1,55 +1,39 @@
-#include <stdio.h>   // fXXXX
+#include <stdio.h>   // fopen, fclose, fread
 #include <stdint.h>  // uint8_t
-#include <stdlib.h>  // calloc
+#include <stdlib.h>  // calloc, free
 #include <string.h>  // memcpy
 
 #include "jpeg.h"
 
 
-/**
- * This helper function parses the Length field of Marker Segment.
- * 
- * @note The Length field in Marker Segment is in big-endian.
- * 
- * @param offset The pointer to the first byte of the Marker Segment
- * 
- * @return The Length field of the Marker Segment
- */
-uint16_t get_segment_length(uint8_t *offset) {
-    uint16_t length = 0;
-    
-    memcpy(&length, offset + 2, 2);
-    return __builtin_bswap16(length);
-}
-
 int main() {
-    FILE    *img          = NULL;   // file descriptor of the image                        
-    uint8_t buffer[40960] = {0};    // byte array containing image data
-    uint8_t *ptr          = NULL;   // pointer to the current byte
+    FILE                  *img      = NULL; // file descriptor of the image
+    uint8_t               *buf      = NULL; // pointer to the byte array containing image data
+    uint8_t               *ptr      = NULL; // pointer to the current byte
+    struct Marker_Segment *segs[16] = {0};  // list of Marker Segment pointers, 16 for now
+    uint8_t               id[2]     = {0};  // identifier of the current Marker Segment
+    uint8_t               seg_idx   = 0;    // index of the Marker Segment pointer in the list
 
-    struct Marker_Segment *segments[16] = {0};  // list of Marker Segment pointers, 16 for now
-    uint8_t               id[2]         = {0};  // identifier of the current Marker Segment
-    uint16_t              seg_len       = 0;    // length of the current Marker Segment
-    uint8_t               seg_idx       = 0;    // index of the Marker Segment pointer in the list
+    /* Allocate dynamic memory */
+    buf = calloc(1024000, 1);
+    for (uint8_t i = 0; i < 16; i++) {
+        segs[i] = calloc(1, sizeof(struct Marker_Segment));
+    }
 
+    /* Read image data */
     img = fopen("./images/test.jpeg", "rb");
-    fread(buffer, 40960, 1, img);
+    fread(buf, 1024000, 1, img);
 
-    /* Set the pointer to point to the first byte of the image */
-    ptr = buffer;
+    /* Set the pointer to point to the first byte of the image data */
+    ptr = buf;
 
     /* Skip the SOI Marker (FF D8) */
     ptr += 2;
 
     /* Parse the Marker Segments */
     do {
-        /* Obtain the length of the Marker Segment */
-        seg_len = get_segment_length(ptr);
-
         /* Construct Marker Segment and skip it */
-        segments[seg_idx] = calloc(1, sizeof(struct Marker_Segment));
-        construct_marker_segment(segments[seg_idx], &ptr, seg_len);
-        seg_idx += 1;
+        construct_marker_segment(segs[seg_idx++], &ptr);
 
         /**
          * Obtain the identifier of the Marker Segment. Since there is at least 1 Marker Segment, we only need to
@@ -62,9 +46,10 @@ int main() {
     fclose(img);
 
     /* Free all dynamically allocated memory */
+    free(buf);
     for (uint8_t i = 0; i < 16; i++) {
-        if (segments[i] != NULL) {
-            free_marker_segment(segments[i]);
+        if (segs[i] != NULL) {
+            free_marker_segment(segs[i]);
         }
     }
 }
