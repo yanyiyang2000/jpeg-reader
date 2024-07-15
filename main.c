@@ -36,7 +36,7 @@ int main() {
         construct_marker_segment(segs[seg_idx++], &ptr);
 
         /**
-         * Obtain the identifier of the Marker Segment. Since there is at least 1 Marker Segment, we only need to
+         * Obtain the identifier of the next Marker Segment. Since there is at least 1 Marker Segment, we only need to 
          * check the existance of Marker Segment after constructing the first one.
          */
         memcpy(id, ptr, 2);

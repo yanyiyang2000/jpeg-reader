@@ -1,4 +1,5 @@
 #include <stdint.h> // uintXX_t
+#include <stdlib.h> // free
 #include <string.h> // memcpy
 
 #include "jpeg.h"
