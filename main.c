@@ -6,7 +6,7 @@
 #include "jpeg.h"
 
 
-int main() {
+int main(int argc, char *argv[]) {
     FILE                  *img      = NULL; // file descriptor of the image
     uint8_t               *buf      = NULL; // pointer to the byte array containing image data
     uint8_t               *ptr      = NULL; // pointer to the current byte
@@ -20,10 +20,16 @@ int main() {
         segs[i] = calloc(1, sizeof(struct Marker_Segment));
     }
 
-    /* Read image data */
-    img = fopen("./images/test.jpeg", "rb");
-    fread(buf, 1024000, 1, img);
+    /* Assert argument */
+    if (argc != 2) {
+        printf("Usage: test <FILE_NAME>");
+        return 1;
+    }
 
+    /* Read image data */
+    img = fopen(argv[1], "rb");
+    fread(buf, 1024000, 1, img);
+    
     /* Set the pointer to point to the first byte of the image data */
     ptr = buf;
 

@@ -61,7 +61,7 @@ static struct Tag tags[] = {
     {"Flash",                       0x9209},    // The status of flash
     {"FocalLength",                 0x920A},    // The actual focal length in mm
     {"SubjectArea",                 0x9214},    // The location and area of the main subject in the overall scene
-    {"MakerNote",                   0x927C},    // The maker note
+    {"MakerNote",                   0x927C},    // The maker note (the offset of maker note in bytes)
     {"UserComment",                 0x9286},    // The user comment
     {"SubsecTimeOriginal",          0x9291},    // The subseconds of the DateTimeOriginal tag
     {"SubsecTimeDigitized",         0x9292},    // The subseconds of the DateTimeDigitize tag
