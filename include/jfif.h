@@ -1,58 +1,34 @@
-#include <stdint.h> // uintXX_t
-#include <stdlib.h> // size_t
-
 #ifndef JFIF_H
 #define JFIF_H
 
-/**
- * [JFIF v1.02, p.5]
- * 
- * JFIF Marker Segment
- * 
- * @note The byte order of the fields is big-endian.
- */
-struct __attribute__((packed)) JFIF_Segment {
-    uint8_t  Identifier[5]; /* NULL terminated ASCII string “JFIF\0” */
-    uint16_t Version;       /* The most significant byte is used for major revisions, the least significant byte for minor revisions */
-    uint8_t  Unit;          /* The units for the X and Y densities */
-    uint16_t XDensity;      /* The horizontal pixel density */
-    uint16_t YDensity;      /* The vertical pixel density */
-    uint8_t  XThumbnail;    /* The thumbnail horizontal pixel count */
-    uint8_t  YThumbnail;    /* The thumbnail vertical pixel count */
-    uint8_t  *RGBn;         /* The packed (24-bit) RGB values for the thumbnail pixels, n = Xthumbnail * Ythumbnail */
-    uint8_t  AMPF[4];       /* ASCII string "AMPF" indicating the existence of MPF images (Apple) */
+#include <stdint.h>
+
+struct JFIF_Segment {
+    uint8_t *Base;  // The pointer to the first byte of Length field of the JFIF Segment
 };
 
 /**
- * This function performs byte swap on the fields of JFIF Segment.
+ * Construct a JFIF Segment struct by parsing the given byte array.
  * 
- * @param segment The pointer to the JFIF Segment
+ * @param seg The pointer to the JFIF Segment struct
+ * @param ptr The pointer to the pointer to the byte array
+ * 
+ * @note Parameter `ptr` will be advanced by the length of the JFIF Segment.
  */
-void jfif_byte_swap(struct JFIF_Segment *segment);
+void jfif_construct(struct JFIF_Segment *seg, uint8_t **ptr);
 
 /**
- * This function prints information of JFIF Segment.
+ * Parse the given JFIF Segment struct.
  * 
- * @param segment The pointer to the JFIF Segment
+ * @param seg The pointer to the JFIF Segment struct
  */
-void jfif_print_info(struct JFIF_Segment *segment);
+void jfif_parse(struct JFIF_Segment *seg);
 
 /**
- * This function constructs a JFIF Segment by parsing the given byte array.
+ * Free the memory dynamically allocated to the given JFIF Segment struct.
  * 
- * @param seg     The pointer to the JFIF Segment
- * @param ptr     The pointer to the pointer to the byte array to be parsed
- * @param seg_len The length of the JFIF Segment
- * 
- * @note The parameter `ptr` will be advanced by the length of the JFIF Segment.
+ * @param seg The pointer to the JFIF Segment struct
  */
-void jfif_construct_segment(struct JFIF_Segment *seg, uint8_t **ptr, uint16_t seg_len);
-
-/**
- * This function frees the memory dynamically allocated to the given JFIF Segment.
- * 
- * @param seg The pointer to the JFIF Segment
- */
-void jfif_free_segment(struct JFIF_Segment *seg);
+void jfif_free(struct JFIF_Segment *seg);
 
 #endif /* JFIF_H */

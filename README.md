@@ -35,8 +35,8 @@ We only care about the information stored in **APP0** and **APP1**.
 | Unit        | 1        |                        |
 | Xdensity    | 2        |                        |
 | Ydensity    | 2        |                        |
-| Xthumbnail  | 2        |                        |
-| Ythumbnail  | 2        |                        |
+| Xthumbnail  | 1        |                        |
+| Ythumbnail  | 1        |                        |
 
 [^2.1]: Specified in **JFIF Version 1.02**, p.5
 [^2.2]: All values of **APP0** are in big-endian

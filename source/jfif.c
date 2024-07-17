@@ -1,66 +1,98 @@
-#include <stdint.h> // uintXX_t
-#include <stdio.h>  // printf
-#include <stdlib.h> // free
-#include <string.h> // memcpy
+#include <inttypes.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
 
+#include "jpeg.h"
 #include "jfif.h"
 
 
-void jfif_byte_swap(struct JFIF_Segment *segment) {
-    segment->Version  = __builtin_bswap16(segment->Version);
-    segment->XDensity = __builtin_bswap16(segment->XDensity);
-    segment->YDensity = __builtin_bswap16(segment->YDensity);
+void jfif_construct(struct JFIF_Segment *seg, uint8_t **ptr) {
+    uint16_t seg_len   = 0;
+
+    /* Skip Marker field, now pointing at Length field */
+    *ptr += 2;
+    seg->Base = *ptr;
+
+    /* Parse Length field */
+    seg_len = __builtin_bswap16(**(uint16_t **)ptr);
+
+    /* Skip Length field, now pointing at Identifier field */
+    *ptr += 2;
+
+    /* Parse Identifier field */
+    if (strncmp(*(const char **)ptr, "JFIF", 5) != 0) {
+        printf("Unknown identifier\n");
+        return;
+    }
+
+    /* Skip JFIF Segment, now pointing at the Marker field of the next Marker Segment */
+    *ptr = seg->Base + seg_len;
 }
 
-void jfif_print_info(struct JFIF_Segment *segment) {
+void jfif_parse(struct JFIF_Segment *seg) {
+    uint8_t *ptr = seg->Base;
+
+    /* Skip Length field, now pointing at Identifier field */
+    *ptr += 2;
+
+    /* Skip Identifier field, now pointing at Version field */
+    *ptr += 5;
+
+    /* Parse Version Major field */
     printf("┌──────────────────────────────────────────┐\n");
     printf("│                   APP0                   │\n");
     printf("├──────────────────────────────────┬───────┤\n");
-    printf("│ JFIF major version               │ %-5d │\n", segment->Version >> 8);
+    printf("│ JFIF Major Version               │ %-5"PRIu8" │\n", *(uint8_t *)ptr);
     printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ JFIF minor version               │ %-5d │\n", segment->Version & 0xff);
+
+    /* Skip Version Major field, now pointing at Version Minor field */
+    ptr += 1;
+
+    /* Parse Version Minor field */
+    printf("│ JFIF Minor Version               │ %-5"PRIu8" │\n", *(uint8_t *)ptr);
     printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Unit                             │ %-5d │\n", segment->Unit);
+
+    /* Skip Version Minor field, now pointing at Unit field */
+    ptr += 1;
+
+    /* Parse Unit field */
+    printf("│ Unit                             │ %-5"PRIu8" │\n", *(uint8_t *)ptr);
     printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Horizontal pixel density         │ %-5d │\n", segment->XDensity);
+
+    /* Skip Unit field, now pointing at Horizontal Pixel Density field */
+    ptr += 1;
+
+    /* Parse Horizontal Pixel Density field */
+    printf("│ Horizontal Pixel Density         │ %-5"PRIu16" │\n", __builtin_bswap16(*(uint16_t *)ptr));
     printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Vertical pixel density           │ %-5d │\n", segment->YDensity);
+
+    /* Skip Horizontal Pixel Density field, now pointing at Vertical Pixel Density field */
+    ptr += 2;
+
+    /* Parse Vertical Pixel Density field */
+    printf("│ Vertical Pixel Density           │ %-5"PRIu16" │\n", __builtin_bswap16(*(uint16_t *)ptr));
     printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Thumbnail horizontal pixel count │ %-5d │\n", segment->XThumbnail);
+
+    /* Skip Vertical Pixel Density field, now pointing at Thumbnail Horizontal Pixel Count field */
+    ptr += 2;
+
+    /* Parse Thumbnail Horizontal Pixel Count field */
+    printf("│ Thumbnail Horizontal Pixel Count │ %-5"PRIu8" │\n", *(uint8_t *)ptr);
     printf("├──────────────────────────────────┼───────┤\n");
-    printf("│ Thumbnail vertical pixel count   │ %-5d │\n", segment->YThumbnail);
+
+    /* Skip Thumbnail Horizontal Pixel Count field, now pointing at Thumbnail Vertical Pixel Count field */
+    ptr += 1;
+
+    /* Parse Thumbnail Vertical Pixel Count field */
+    printf("│ Thumbnail Vertical Pixel Count   │ %-5"PRIu8" │\n", *(uint8_t *)ptr);
     printf("└──────────────────────────────────┴───────┘\n\n");
+
+    /* Skip Thumbnail Vertical Pixel Count field */
+    ptr += 1;
 }
 
-void jfif_construct_segment(struct JFIF_Segment *seg, uint8_t **ptr, uint16_t seg_len) {
-    uint16_t n = 0;    // RGBn field length
-
-    /* Obtain the JFIF Segment excluding RGBn and AMPF fields */
-    memcpy(seg->Identifier, *ptr, 14);
-    
-    /* Swap bytes of the fields of the JFIF Segment which is in big-endian */
-    jfif_byte_swap(seg);
-
-    /* Skip the fields, now pointing at the RGBn field */
-    *ptr += 14;
-
-    /* Obtain the RGBn field if exists */
-    n = seg->XThumbnail * seg->YThumbnail;  // [JFIF v1.02, p.5]
-    if (n > 0) {                            // it is possible the length of this field is 0
-        seg->RGBn = calloc(1, 3*n);
-        *ptr += n;                          // skip the RGBn field
-    }
-
-    /* Obtain the AMPF field if exists */
-    if (*ptr < *ptr + seg_len) {
-        memcpy(seg->AMPF, *ptr, 4);
-        *ptr += 4; // skip the AMPF field
-    }
-
-    jfif_print_info(seg);
-}
-
-void jfif_free_segment(struct JFIF_Segment *seg) {
-    free(seg->RGBn);
-    free(seg);
+void jfif_free(struct JFIF_Segment *seg) {
+    /* Nothing to be freed */
 }

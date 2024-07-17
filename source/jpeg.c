@@ -1,55 +1,54 @@
-#include <stdint.h> // uintXX_t
-#include <stdlib.h> // free
-#include <string.h> // memcpy
+#include <inttypes.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "jpeg.h"
 #include "jfif.h"
 #include "exif.h"
 
 
-void construct_marker_segment(struct Marker_Segment *seg, uint8_t **ptr) {
-    struct JFIF_Segment *jfif_segment = NULL; // pointer to the JFIF Segment
-    struct Exif_Segment *exif_segment = NULL; // pointer to the Exif Segment
+void jpeg_construct(struct JPEG *jpeg, uint8_t *ptr) {
+    uint16_t marker = 0;
 
-    /* Obtain the Marker field */
-    memcpy(seg->Marker, *ptr, 2);
+    /* Skip SOI Marker Segment, now pointing at APP Marker Segment */
+    ptr += 2;
 
-    /* Skip the Marker field, now pointing at the Length field */
-    *ptr += 2;
+    while (1) {
+        /* Parse Marker field */
+        marker = __builtin_bswap16(*(uint16_t *)ptr);
 
-    /* Obtain value to the Length field */
-    memcpy(&seg->Length, ptr, 2);
-    seg->Length = __builtin_bswap16(seg->Length);
+        /* Construct the corresponding APP Marker Segment */
+        switch (marker) {
+            case 0xFFE0: {
+                printf("APP0\n");
+                jpeg->JFIF_Seg = calloc(1, sizeof(struct JFIF_Segment));
+                jfif_construct(jpeg->JFIF_Seg, &ptr);
+                break;
+            }
 
-    /* Skip the Length field, now pointing at the Identifier field */
-    *ptr += 2;
+            case 0xFFE1: {
+                printf("APP1\n");
+                jpeg->EXIF_Seg = calloc(1, sizeof(struct EXIF_Segment));
+                exif_construct(jpeg->EXIF_Seg, &ptr);
+                break;
+            }
 
-    /* Construct a specific Segment based on the Marker field and skip it */
-    switch (seg->Marker[1]) {
-        case 0xE0:
-            jfif_segment = calloc(1, sizeof(struct JFIF_Segment));
-            jfif_construct_segment(jfif_segment, ptr, seg->Length - 2);
-            seg->jfif_segment = jfif_segment;
-            break;
-
-        case 0xE1:
-            exif_segment = calloc(1, sizeof(struct Exif_Segment));
-            exif_construct_segment(exif_segment, ptr, seg->Length - 2);
-            seg->exif_segment = exif_segment;
-            break;
+            default: {
+                printf("Not an APP Marker Segment\n");
+                return;
+            }
+        }
     }
 }
 
-void free_marker_segment(struct Marker_Segment *seg) {
-    switch (seg->Marker[1]) {
-        case 0xE0:
-            jfif_free_segment(seg->jfif_segment);
-            break;
+void jpeg_parse(struct JPEG *jpeg) {
+    jfif_parse(jpeg->JFIF_Seg);
+    exif_parse(jpeg->EXIF_Seg);
+}
 
-        case 0xE1:
-            exif_free_segment(seg->exif_segment);
-            break;
-    }
-
-    free(seg);
+void jpeg_free(struct JPEG *jpeg) {
+    jfif_free(jpeg->JFIF_Seg);
+    free(jpeg->JFIF_Seg);
+    exif_free(jpeg->EXIF_Seg);
+    free(jpeg->EXIF_Seg);
 }

@@ -7,7 +7,7 @@ project(Test LANGUAGES C)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/source)
 
-add_executable(test main.c)
+add_executable(test demo.c)
 
 target_link_libraries(
     test
