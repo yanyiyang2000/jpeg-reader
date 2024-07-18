@@ -106,89 +106,14 @@ Each **DE** is 12-byte.
 [^6.1]: Specified in **TIFF Revision 6.0**, pp.14-15
 [^6.2]: If 4 bytes are not enough to hold all the values, this value indicates the offset of the actual values from the first byte of IFH
 
+
 # Workflow Overview
 ![alt text](/assets/flowchart.png)
+
 
 # Constructing Exif Segment
 ![alt text](/assets/flowchart_exif.png)
 
-# Data Structure
-
-## `Marker_Segment`
-Struct `Marker_Segment` is defined as
-```c
-struct __attribute__((packed)) Marker_Segment {
-    uint8_t  Marker[2];
-    uint16_t Length;
-    union {
-        struct JFIF_Segment *jfif_segment;
-        struct Exif_Segment *exif_segment;
-    };
-};
-```
-
-## `JFIF_Segment`
-Struct `JFIF_Segment` is defined as
-```c
-struct __attribute__((packed)) JFIF_Segment {
-    uint8_t  Identifier[5]; 
-    uint16_t Version;
-    uint8_t  Unit;
-    uint16_t XDensity;
-    uint16_t YDensity;
-    uint8_t  XThumbnail;
-    uint8_t  YThumbnail;
-    uint8_t  *RGBn;
-    uint8_t  AMPF[4];
-};
-```
-
-## `Exif_Segment`
-Struct `Exif_Segment` is defined as
-```c
-struct __attribute__((packed)) Exif_Segment {
-    uint8_t                     Identifier[6];
-    struct Image_File_Header    IFH;
-    struct Image_File_Directory *IFDs;
-    struct Image_File_Directory *Exif_IFD;
-    struct Image_File_Directory *GPS_IFD;
-};
-```
-
-## `Image_File_Header`
-Struct `Image_File_Header` is defined as
-```c
-struct __attribute__((packed)) Image_File_Header {
-    uint16_t Byte_Order;
-    uint16_t Magic_Number;
-    uint32_t IFD_Offset;
-};
-```
-
-## `Image_File_Directory`
-Struct `Image_File_Directory` is defined as
-```c
-struct Image_Field_Directory {
-    uint16_t                     DE_Count;
-    struct Directory_Entry       *DE;
-    uint32_t                     IFD_Offset;
-    struct Image_Field_Directory *Next_IFD;
-};
-```
-
-## `Directory_Entry`
-Struct `Directory_Entry` is defined as
-```c
-struct __attribute__((packed)) Directory_Entry {
-    uint16_t Tag;
-    uint16_t Type;
-    uint32_t Value_Count;
-    union {
-        uint32_t Value_Offset;
-        void     *Values;
-    };
-};
-```
 
 # Reference
 - ISO/IEC 10918-1 (JPEG)

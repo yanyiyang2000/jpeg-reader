@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 struct JFIF_Segment {
-    uint8_t *Base;  // The pointer to the first byte of Length field of the JFIF Segment
+    uint8_t *Base;  // The pointer to VERSION MAJOR of the JFIF Segment
 };
 
 /**
