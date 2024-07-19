@@ -13,15 +13,14 @@ int main(int argc, char *argv[]) {
     buf  = calloc(1024000, 1);
     jpeg = calloc(1, sizeof(struct JPEG));
 
-    /* Assert argument */
-    // if (argc != 2) {
-    //     printf("Usage: test <FILE_NAME>");
-    //     return 1;
-    // }
+    /* Assert number of arguments */
+    if (argc != 2) {
+        printf("Usage: test <FILE_NAME>");
+        return 1;
+    }
 
     /* Read image data */
-    // fd = fopen(argv[1], "rb");
-    fd = fopen("./images/test.jpeg", "rb");
+    fd = fopen(argv[1], "rb");
     fread(buf, 1024000, 1, fd);
     fclose(fd);
 

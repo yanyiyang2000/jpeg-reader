@@ -37,7 +37,10 @@ void jfif_construct(struct JFIF_Segment *seg, uint8_t **ptr) {
 }
 
 void jfif_parse(struct JFIF_Segment *seg) {
-    uint8_t *ptr = seg->Base;
+    uint8_t *ptr = NULL;
+
+    /* Now pointing at VERSION MAJOR */
+    ptr = seg->Base;
 
     /* Parse and skip VERSION MAJOR */
     printf("┌──────────────────────────────────────────┐\n");

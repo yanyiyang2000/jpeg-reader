@@ -10,7 +10,7 @@ struct Tag {
 };
 
 static struct Tag tags[] = {
-    /* Baseline Tags [TIFF Rev 6.0, pp.117-118] */
+    /* Baseline and Extension Tags [TIFF Rev 6.0, pp.117-118] */
     {"Image Width",                     0x0100},    // The image width
     {"Image Height",                    0x0101},    // The image height
     {"Bits Per Sample",                 0x0102},    // The number of bits per component
@@ -21,17 +21,15 @@ static struct Tag tags[] = {
     {"Model",                           0x0110},    // The model name or number of the scanner, video digitizer, or other type of equipment used to generate the image
     {"Orientation",                     0x0112},    // The orientation of the image with respect to the rows and columns
     {"Samples Per Pixel",               0x0115},    // The number of components per pixel
-    {"X Resolution",                    0x011A},    // The number of pixels per ResolutionUnit in the ImageWidth
-    {"Y Resolution",                    0x011B},    // The number of pixels per ResolutionUnit in the ImageLength
+    {"X Resolution",                    0x011A},    // The number of pixels per Resolution Unit in the Image Width
+    {"Y Resolution",                    0x011B},    // The number of pixels per Resolution Unit in the Image Length
     {"Resolution Unit",                 0x0128},    // 1 = No absolute unit of measurement. 2 = Inch. 3 = Centimeter.
     {"Software",                        0x0131},    // The name and version number of the software package(s) used to create the image
     {"DateTime",                        0x0132},    // The date and time of the image creation
     {"Host Computer",                   0x013C},    // The computer and/or operating system in use at the time of image creation
-
-    /* Extension Tags [TIFF Rev 6.0, pp.117-118] */
     {"Tile Width",                      0x0142},    // The tile width in pixels
     {"Tile Length",                     0x0143},    // The tile length (height) in pixels
-    {"JPEG Interchange Format",         0x0201},    // The offset to JPEG SOI in bytes
+    {"JPEG Interchange Format",         0x0201},    // The offset of JPEG SOI in bytes
     {"JPEG Interchange Format Length",  0x0202},    // The length of JPEG data in bytes
     {"Y Cb Cr Positioning",             0x0213},    // The positioning of subsampled chrominance components relative to luminance samples
 

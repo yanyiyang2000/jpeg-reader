@@ -1,3 +1,24 @@
+# Prerequisite
+Install the following packages:
+- `gcc-12`
+- `cmake`
+
+
+# Building
+In the project root directory, use the following commands to build the project:
+```bash
+cmake -B build .
+cmake --build ./build
+```
+
+
+# Running
+In the project root directory, use the following commands to run the executable:
+```bash
+build/demo <FILE_NAME_WITH_EXTENSION>
+```
+
+
 # JPEG File Format [^1.1]
 Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**APP**).
 
@@ -22,10 +43,12 @@ Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**A
 [^1.2]: Unless otherwise stated, all monospace texts are in hexadecimal
 [^1.3]: Unless otherwise stated, all lengths are in bytes
 
-We only care about the information stored in **APP0** and **APP1**.
+We only care about the information stored in **APP0** (JFIF Segment) and **APP1** (EXIF Segment).
 
 
 ## APP0 [^2.1]
+**APP1** is composed of fields.
+
 | Description | Length   | Value                  |
 | ----------- | -------- | ---------------------- |
 | Marker      | 2        | `FF E0`                |
@@ -94,8 +117,6 @@ Each **IFD** is composed of multiple *Directory Entries* (**DE**s).
 
 
 ## DE [^6.1]
-Each **DE** is 12-byte.
-
 | Description        | Length   | Value  |
 | ------------------ | -------- | ------ |
 | Tag                | 2        |        |

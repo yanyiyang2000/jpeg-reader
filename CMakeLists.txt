@@ -3,26 +3,26 @@ cmake_minimum_required(VERSION 3.22)
 set(CMAKE_C_COMPILER "/usr/bin/gcc-12")
 set(CMAKE_CXX_STANDARD 23)
 
-project(Test LANGUAGES C)
+project(JPEG_Reader_Demo LANGUAGES C)
 
 add_subdirectory(${PROJECT_SOURCE_DIR}/source)
 
-add_executable(test demo.c)
+add_executable(demo demo.c)
 
 target_link_libraries(
-    test
+    demo
     PUBLIC
     jpeg-reader
 )
 
 target_include_directories(
-    test
+    demo
     PUBLIC
     "${PROJECT_SOURCE_DIR}/include"
 )
 
 target_compile_options(
-    test
+    demo
     PUBLIC
     -O0
     -g3

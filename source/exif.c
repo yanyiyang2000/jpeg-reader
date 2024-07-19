@@ -54,11 +54,8 @@ void exif_construct(struct EXIF_Segment *seg, uint8_t **ptr) {
         }
     }
 
-    /* Skip BYTE ORDER, now pointing at MAGIC NUMBER of IFH */
-    *ptr += 2;
-
-    /* Skip MAGIC NUMBER, now pointing at IFD OFFSET of IFH */
-    *ptr += 2;
+    /* Skip BYTE ORDER and MAGIC NUMBER, now pointing at IFD OFFSET of IFH */
+    *ptr += 4;
 
     /* Parse IFD OFFSET */
     ifd_ofst = (need_byte_swap) ? __builtin_bswap32(**(uint32_t **)ptr) : **(uint32_t **)ptr;
