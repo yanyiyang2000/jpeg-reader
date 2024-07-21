@@ -40,11 +40,11 @@ void exif_construct(struct EXIF_Segment *seg, uint8_t **ptr) {
     
     /* Parse BYTE ORDER */
     switch (**(uint16_t **)ptr) {
-        case BYTE_ORDER_BIG_ENDIAN: {
+        case BYTE_ORDER_MM: {
             need_byte_swap = true;
             break;
         }
-        case BYTE_ORDER_LITTLE_ENDIAN: {
+        case BYTE_ORDER_II: {
             need_byte_swap = false;
             break;
         }

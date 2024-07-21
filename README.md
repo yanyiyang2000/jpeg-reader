@@ -1,4 +1,15 @@
-# Prerequisite
+# Features
+- This C library parses the Application Marker Segments of JPEG files to extract metadata.
+- Only standard C library is 
+used.
+- The only assumption is that the machine running the program is little-endian.
+
+
+# Structure
+- `source` contains all the C code to build the library.
+- `demo.c` is a demonstration on how to use the library.
+
+# Prerequisites
 Install the following packages:
 - `gcc-12`
 - `cmake`
