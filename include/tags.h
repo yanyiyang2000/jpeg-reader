@@ -1,9 +1,21 @@
-#ifndef TAG_H
-#define TAG_H
+/**
+ * @file   tags.h
+ * 
+ * @author Yiyang Yan
+ * 
+ * @date   2024/07/20
+ * 
+ * @brief  Enumeration of tags used in JPEG files.
+ */
+
+#ifndef TAGS_H
+#define TAGS_H
 
 #include <stdint.h>
 
-
+/**
+ * @brief Tag representation
+ */
 struct Tag {
     char     *Name;   /* The tag name */
     uint16_t Number;  /* The tag number in hexadecimal */
@@ -104,4 +116,4 @@ static struct Tag tags[] = {
     {"GPS H Positioning Error",         0x001F}     // The horizontal positioning error
 };
 
-#endif /* TAG_H */
+#endif /* TAGS_H */
