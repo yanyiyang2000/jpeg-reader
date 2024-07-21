@@ -1,20 +1,30 @@
+/**
+ * @file   jpeg.h
+ * 
+ * @author Yiyang Yan
+ * 
+ * @date   2024/07/20
+ * 
+ * @brief  Functions to parse EXIF Segment.
+ */
+
 #ifndef EXIF_H
 #define EXIF_H
 
 #include <stdint.h>
 
 /**
- * Description: Image File Directory Byte Orders defines
+ * @brief Image File Directory byte orders
  * 
- * Reference:   TIFF Revision 6.0, p.13
+ * Reference: TIFF Revision 6.0, p.13
  */
 #define BYTE_ORDER_II   0x4949  // Little-endian
 #define BYTE_ORDER_MM   0x4D4D  // Big-endian
 
 /**
- * Description: Directory Entry Field Types defines
+ * @brief Directory Entry field types
  * 
- * Reference:   TIFF Revision 6.0, pp.15-16
+ * Reference: TIFF Revision 6.0, pp.15-16
  */
 #define BYTE            1       // 8-bit unsigned integer
 #define ASCII           2       // 8-bit byte that contains a 7-bit ASCII code; the last byte must be NULL
@@ -29,6 +39,9 @@
 #define FLOAT           11      // Single precision (4-byte) IEEE format
 #define DOUBLE          12      // Double precision (8-byte) IEEE format
 
+/**
+ * @brief EXIF Segment representation
+ */
 struct EXIF_Segment {
     uint8_t *IFH_Base;                      // The pointer to the first byte of IFH
     struct Image_File_Directory *Next_IFD;  // The pointer to the next IFD
@@ -36,12 +49,18 @@ struct EXIF_Segment {
     struct Image_File_Directory *GPS_IFD;   // The pointer to the GPS IFD
 };
 
+/**
+ * @brief Image File Directory representation
+ */
 struct Image_File_Directory {
     uint16_t DE_Count;                      // The number of DEs
     struct Image_File_Directory *Next_IFD;  // The pointer to the next IFD
     struct Directory_Entry      *DEs;       // The pointer to the first DE
 };
 
+/**
+ * @brief Directory Entry representation
+ */
 struct Directory_Entry {
     uint16_t Tag;           // The tag of the DE
     uint16_t Value_Type;    // The type of values
