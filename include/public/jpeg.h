@@ -18,8 +18,8 @@
  * @brief JPEG file representation
  */
 struct JPEG {
-    struct EXIF_Segment *EXIF_Seg;  // The pointer to the EXIF Segment
-    struct JFIF_Segment *JFIF_Seg;  // The pointer to the JFIF Segment
+    void *EXIF_Seg;  // The pointer to the EXIF Segment
+    void *JFIF_Seg;  // The pointer to the JFIF Segment
 };
 
 /**
