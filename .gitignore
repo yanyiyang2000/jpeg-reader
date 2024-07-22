@@ -1,3 +1,4 @@
 .vscode/*
-example/images/*
 build/*
+example/images/*
+example/demo
