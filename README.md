@@ -5,8 +5,11 @@ used.
 - The only assumption is that the machine running the program is little-endian.
 
 # Structure
-- `source` contains all the C code to build the library.
-- `demo.c` is a demonstration on how to use the library.
+| Directory |                 Comment                 |
+| --------- | --------------------------------------- |
+| `source`  | Library implementations                 |
+| `include` | Library APIs                            |
+| `example` | Demonstration on how to use the library |
 
 # Prerequisites
 Install the following packages:
