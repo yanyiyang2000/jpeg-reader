@@ -1,9 +1,9 @@
 add_library(
     jpeg-reader
     STATIC
-    public/jpeg.c
-    private/jfif.c
-    private/exif.c
+    jpeg.c
+    jfif.c
+    exif.c
 )
 
 target_include_directories(
