@@ -4,7 +4,6 @@
 used.
 - The only assumption is that the machine running the program is little-endian.
 
-
 # Structure
 - `source` contains all the C code to build the library.
 - `demo.c` is a demonstration on how to use the library.
@@ -14,21 +13,24 @@ Install the following packages:
 - `gcc-12`
 - `cmake`
 
-
 # Building
-In the project root directory, use the following commands to build the project:
+In the project root directory, use the following commands to build the targets:
 ```bash
 cmake -B build .
 cmake --build ./build
 ```
 
-
-# Running
-In the project root directory, use the following commands to run the executable:
+# Installing
+In the `build` directory, use the following command to install the executable:
 ```bash
-build/demo <FILE_NAME_WITH_EXTENSION>
+make install
 ```
 
+# Running
+In the `example` directory, use the following command to run the executable:
+```bash
+./demo <FILE_NAME_WITH_EXTENSION>
+```
 
 # JPEG File Format [^1.1]
 Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**APP**).
@@ -56,7 +58,6 @@ Metadata of a JPEG file is stored in multiple *Application Marker Segments* (**A
 
 We only care about the information stored in **APP0** (JFIF Segment) and **APP1** (EXIF Segment).
 
-
 ## APP0 [^2.1]
 **APP1** is composed of fields.
 
@@ -76,7 +77,6 @@ We only care about the information stored in **APP0** (JFIF Segment) and **APP1*
 [^2.2]: All values of **APP0** are in big-endian
 [^2.3]: ASCII string "JFIF" terminated by a null byte
 
-
 ## APP1 [^3.1]
 **APP1** is composed of a *Image File Header* (**IFH**) and multiple *Image File Directories* (**IFD**s).
 
@@ -95,7 +95,6 @@ We only care about the information stored in **APP0** (JFIF Segment) and **APP1*
 [^3.2]: Length is always in big-endian
 [^3.3]: ASCII string "Exif" terminated by two null bytes
 
-
 ## IFH [^4.1]
 | Description             | Length   | Value   |
 | ----------------------- | -------- | ------- |
@@ -108,7 +107,6 @@ We only care about the information stored in **APP0** (JFIF Segment) and **APP1*
 [^4.3]: `49 49` for little-endian and `4D 4D` for big-endian
 [^4.4]: `2A 00` for little-endian and `00 2A` for big-endian
 [^4.5]: Offset is from the first byte of IFH
-
 
 ## IFD [^5.1]
 Each **IFD** is composed of multiple *Directory Entries* (**DE**s).
@@ -126,7 +124,6 @@ Each **IFD** is composed of multiple *Directory Entries* (**DE**s).
 [^5.2]: Offset is from the first byte of IFH
 [^5.3]: `00 00 00 00` for the last IFD
 
-
 ## DE [^6.1]
 | Description        | Length   | Value  |
 | ------------------ | -------- | ------ |
@@ -138,14 +135,11 @@ Each **IFD** is composed of multiple *Directory Entries* (**DE**s).
 [^6.1]: Specified in **TIFF Revision 6.0**, pp.14-15
 [^6.2]: If 4 bytes are not enough to hold all the values, this value indicates the offset of the actual values from the first byte of IFH
 
-
 # Workflow Overview
 ![alt text](/assets/flowchart.png)
 
-
 # Constructing Exif Segment
 ![alt text](/assets/flowchart_exif.png)
-
 
 # Reference
 - ISO/IEC 10918-1 (JPEG)

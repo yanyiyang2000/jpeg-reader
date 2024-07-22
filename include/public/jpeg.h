@@ -13,8 +13,6 @@
 
 #include <stdint.h>
 
-#include "jfif.h"
-#include "exif.h"
 
 /**
  * @brief JPEG file representation

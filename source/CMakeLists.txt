@@ -1,9 +1,17 @@
-add_library(jpeg-reader jpeg.c jfif.c exif.c)
+add_library(
+    jpeg-reader
+    STATIC
+    public/jpeg.c
+    private/jfif.c
+    private/exif.c
+)
 
 target_include_directories(
-    jpeg-reader 
-    PUBLIC 
-    "${PROJECT_SOURCE_DIR}/include"
+    jpeg-reader
+    PUBLIC
+    "${PROJECT_SOURCE_DIR}/include/public"
+    PRIVATE
+    "${PROJECT_SOURCE_DIR}/include/private"
 )
 
 target_compile_options(
